@@ -69,7 +69,7 @@
               </el-row>-->
               <el-row>
                 <el-col :span="12">
-                  <el-form-item size="small" label="商品简介：">
+                  <el-form-item size="small" label="商品简介：" prop="textarea">
                     <el-input type="textarea" v-model="ruleForm.desc" :rows="4"></el-input>
                   </el-form-item>
                 </el-col>
@@ -138,7 +138,7 @@
               </el-row>-->
               <el-row v-if="!shopObj">
                 <el-col :span="12">
-                  <el-form-item label="零件编码(oe)：">
+                  <el-form-item label="零件编码(oe)：" prop="oe">
                     <el-input size="small" v-model="ruleForm.oe"></el-input>
                   </el-form-item>
                 </el-col>
@@ -530,7 +530,12 @@ export default {
         gallery_images: [
           { required: true, message: "请上传商品浏览图", trigger: "change" }
         ],
-        postage: [{ required: true, message: "请输入邮费", trigger: "blur" }]
+        postage: [{ required: true, message: "请输入邮费", trigger: "blur" }],
+        price: [{ required: true, message: "请输入价格", trigger: "blur" }],
+        textarea: [{ required: true, message: "请输入简介", trigger: "blur" }],
+        weight: [{ required: true, message: "请输入重量", trigger: "blur" }],
+        stock: [{ required: true, message: "请输入库存", trigger: "blur" }],
+        oe: [{ required: true, message: "请输入零件编码", trigger: "blur" }],
       },
       addInp: "",
       // 是否添加规格（渲染按钮还是输入框）
@@ -600,7 +605,9 @@ export default {
         this.ruleForm = { ...this.shopObj };
         this.ruleForm.status = this.shopObj.status.toString();
         this.updateId = this.shopObj.id;
-        if(this.ruleForm.gallery_images[this.ruleForm.gallery_images.length-1]){
+        if (
+          this.ruleForm.gallery_images[this.ruleForm.gallery_images.length - 1]
+        ) {
           this.ruleForm.gallery_images.push(null);
         }
         delete this.ruleForm.created_at;
@@ -624,6 +631,9 @@ export default {
       //   }
       // });
       console.log(this.ruleForm, this.skuTableData);
+      if (this.skuTableData.length == 0) {
+        this.$message.error("规格值必填");
+      }
       delete this.skuTableData[0]._XID;
       delete this.ruleForm.type;
       delete this.ruleForm.sub_title;
@@ -632,6 +642,7 @@ export default {
       // delete this.ruleForm.type;
       if (!this.shopObj) {
         // 添加
+        console.log(11111);
         const res = await this.$api.addItems({
           ...this.ruleForm,
           parameter: this.skuTableData[0],
@@ -665,7 +676,7 @@ export default {
         const res = await this.$api.upDateItems(
           {
             ...this.ruleForm,
-             parameter: this.skuTableData[0],
+            parameter: this.skuTableData[0],
             detail_intro: document.getElementsByClassName("w-e-text")[0]
               .innerHTML,
             category_id:
