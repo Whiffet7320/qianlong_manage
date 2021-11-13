@@ -10,7 +10,8 @@ import 'viewerjs/dist/viewer.css';
 import 'xe-utils';
 import VXETable from 'vxe-table';
 import 'vxe-table/lib/style.css';
-import VueParticles from 'vue-particles'  
+import VueParticles from 'vue-particles'  ;
+import io from 'socket.io-client';
 Vue.use(VueParticles)  
 Vue.use(VXETable)
 
@@ -19,6 +20,7 @@ Vue.use(VXETable)
 // }
 // Vue.prototype.$uploadOSS = uploadOSS;
 Vue.prototype.$api = api;
+Vue.prototype.$io = io;
 // Vue.prototype.$url = 'http://192.168.1.128:8094/admin'
 Vue.prototype.$url = 'http://pinapi.hxqhhhh.shop'
 // Vue.prototype.$url = 'http://192.168.50.142:9083'
@@ -40,7 +42,31 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+//进入页面创建websocket连接
+function initWebSocket() {
+  var isDotNumList = [];
+  const socket = io('http://dev.cars.hxqhhhh.shop:1215',{
+    transports: ['websocket']
+  });
+  socket.on("message", (data) => {
+    console.log("message", data)
+  })
+
+  socket.on("chatMessage", (data) => {
+    console.log("message", data)
+    isDotNumList.push(Number(data[1].user_id))
+    store.commit('overallIsDot', true);
+    store.commit('isDotNum', isDotNumList);
+    store.commit('havaMessage', true);
+  })
+
+  socket.on("connect", () => {
+    socket.emit("bind", [sessionStorage.getItem('userId')])
+  })
+}
+initWebSocket();
+Vue.prototype.$initWebSocket = initWebSocket
 
 new Vue({
   render: h => h(App),

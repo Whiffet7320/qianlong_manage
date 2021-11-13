@@ -57,33 +57,55 @@
               <template>
                 <div class="xiala">
                   <el-row :gutter="20">
-                    <el-col :span="10">
-                      <div class="item">用户创建时间：{{row.created_at}}</div>
-                    </el-col>
                     <el-col :span="6">
-                      <div class="item">积分：{{ row.level }}</div>
-                    </el-col>
-                    <el-col :span="6">
-                      <div class="item">性别：{{ row.user_info.gender == 1? '男' : '女' }}</div>
+                      <div class="item">
+                        店铺图：
+                        <el-image
+                          v-if="row.user_info"
+                          :src="row.user_info.shop_img"
+                          fit="fill"
+                          style="width: 80px; height: 80px"
+                        >
+                          <div slot="error" class="image-slot">
+                            <i class="el-icon-picture-outline"></i>
+                          </div>
+                        </el-image>
+                      </div>
                     </el-col>
                   </el-row>
-                  <!-- <div style="margin-top: 16px"></div>
+                  <div style="margin-top: 16px"></div>
                   <el-row :gutter="20">
                     <el-col :span="6">
-                      <div class="item">积分：{{row.integral}}</div>
+                      <div class="item">店铺名称：{{row.user_info?row.user_info.shop_name:''}}</div>
                     </el-col>
                     <el-col :span="6">
-                      <div class="item">会员过期时间：{{row.myOverdue_vip_time}}</div>
+                      <div class="item">店铺联系方式：{{row.user_info? row.user_info.shop_phone:'' }}</div>
                     </el-col>
-                  </el-row>-->
+                    <el-col :span="10">
+                      <div
+                        class="item"
+                        v-if="row.user_info"
+                      >地址：{{ row.user_info.area }} {{row.user_infodetail_address}}</div>
+                    </el-col>
+                  </el-row>
+                  <div style="margin-top: 16px"></div>
+                  <el-row :gutter="20">
+                    <el-col :span="6">
+                      <div class="item">邀请码：{{row.invite_code}}</div>
+                    </el-col>
+                    <el-col :span="6">
+                      <div class="item">用户手机号：{{ row.phone }}</div>
+                    </el-col>
+                  </el-row>
                 </div>
               </template>
             </template>
           </vxe-table-column>
           <vxe-table-column field="id" title="ID"></vxe-table-column>
-          <vxe-table-column field="avatar" title="头像">
+          <vxe-table-column field="avatar" title="企业图标/头像">
             <template slot-scope="scope">
               <el-image
+                v-if="scope.row.user_info"
                 :src="scope.row.user_info.avatar"
                 fit="fill"
                 style="width: 40px; height: 40px"
@@ -94,18 +116,33 @@
               </el-image>
             </template>
           </vxe-table-column>
-          <vxe-table-column field="user_info.nick_name" title="姓名"></vxe-table-column>
-          <vxe-table-column field="phone" title="手机号"></vxe-table-column>
-          <vxe-table-column field="money" title="余额"></vxe-table-column>
-          <vxe-table-column title="操作状态" width="150">
+          <vxe-table-column field="avatar" title="企业营业执照">
             <template slot-scope="scope">
-              <div class="flex">
-                <el-button size="small" @click="toEdit(scope.row)" type="text">编辑</el-button>
-                <el-button size="small" @click="seeMingxi(scope.row)" type="text">查看明细</el-button>
-                <!-- <el-button size="small" @click="toPingtuanjilu(scope.row)" type="text">拼团记录</el-button> -->
-              </div>
+              <el-image
+                v-if="scope.row.user_info"
+                :src="scope.row.user_info.business_license"
+                fit="fill"
+                style="width: 40px; height: 40px"
+              >
+                <div slot="error" class="image-slot">
+                  <i class="el-icon-picture-outline"></i>
+                </div>
+              </el-image>
             </template>
           </vxe-table-column>
+          <vxe-table-column field="user_info.nick_name" title="企业名称"></vxe-table-column>
+          <vxe-table-column field="myType" title="类型"></vxe-table-column>
+          <vxe-table-column field="myUser_infoStatus" title="审核状态"></vxe-table-column>
+          <!-- <vxe-table-column field="user_info.shop_name" title="店铺名称"></vxe-table-column> -->
+          <!-- <vxe-table-column field="user_info.shop_phone" title="店铺联系方式"></vxe-table-column> -->
+          <vxe-table-column field="score" title="积分"></vxe-table-column>
+          <!-- <vxe-table-column title="操作状态" width="150">
+            <template slot-scope="scope">
+              <div class="flex">
+                <el-button size="small" @click="seeMingxi(scope.row)" type="text">查看明细</el-button>
+              </div>
+            </template>
+          </vxe-table-column> -->
         </vxe-table>
         <el-pagination
           class="fenye"
@@ -251,15 +288,23 @@ export default {
     async getData() {
       const res = await this.$api.users({
         limit: this.yonghuguanliPageSize,
-        page: this.yonghuguanliPage,
-        type: 0,
-        id: this.formInline.select == 2 ? this.formInline.search : "",
-        phone: this.formInline.select == 3 ? this.formInline.search : "",
-        nick_name: this.formInline.select == 4 ? this.formInline.search : ""
+        page: this.yonghuguanliPage
       });
-      console.log(res.data.data);
+      console.log(res.data);
       this.total = res.data.total;
       this.tableData = res.data.data;
+      this.tableData.forEach(ele => {
+        if (ele.user_info) {
+          ele.myType =
+            ele.user_info.type == 0
+              ? "企业"
+              : ele.user_info.type == 1
+              ? "个体工商户"
+              : "小微";
+          ele.myUser_infoStatus = ele.user_info.status == 0 ? '审核中' : ele.user_info.status == 1 ? '审核通过' : '审核未通过'; 
+        }
+      });
+      console.log(this.tableData);
     },
     async getMingxiData() {
       const res = await this.$api.usersIdMoneyRecords({
@@ -308,7 +353,7 @@ export default {
       this.editDialogVisible = true;
     },
     async seeMingxi(row) {
-      console.log(row)
+      console.log(row);
       this.mingxiUser_id = row.id;
       this.getMingxiData();
       this.dialogVisible = true;
@@ -323,12 +368,12 @@ export default {
     },
     onSubmit() {
       console.log(this.formInline);
-      this.getData()
+      this.getData();
     },
     onReact() {
-      this.formInline.search = '';
-      this.formInline.select = '';
-      this.getData()
+      this.formInline.search = "";
+      this.formInline.select = "";
+      this.getData();
     },
     handleClose() {
       this.dialogVisible = false;
@@ -427,6 +472,7 @@ export default {
       padding: 10px 20px;
       .item {
         font-size: 12px;
+        display: flex;
       }
     }
     .flex {
@@ -472,6 +518,8 @@ export default {
     padding: 10px 20px;
     .item {
       font-size: 12px;
+      display: flex;
+      // align-items: center;
     }
   }
   .flex {

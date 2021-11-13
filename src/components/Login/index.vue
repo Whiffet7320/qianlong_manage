@@ -64,12 +64,12 @@
                 @keyup.enter.native="onLogin"
               ></el-input>
             </el-form-item>
-            <el-form-item>
+            <!-- <el-form-item>
               <div class="footer">
                 <div class="wjmm">忘记密码</div>
                 <div class="zczh">注册账号</div>
               </div>
-            </el-form-item>
+            </el-form-item> -->
           </el-form>
           <el-button
             @click="onLogin"
@@ -130,20 +130,19 @@ export default {
         password: this.loginForm.password
       });
       console.log(res);
-      if (res.code == 200) {
+      if (res && res.status == 200) {
         sessionStorage.setItem("token", res.data.token_info.access_token);
         sessionStorage.setItem("isLogin", true);
         sessionStorage.setItem("userInfo", JSON.stringify(res.data.user));
+        sessionStorage.setItem("userId", res.data.user.id);
         this.$message({
-          message: res.message,
+          message: '登录成功',
           type: "success"
         });
         setTimeout(() => {
           this.$router.push({ path: "/" });
           this.$router.go(0);
         }, 500);
-      } else {
-        this.$message.error(res.message);
       }
     }
   }

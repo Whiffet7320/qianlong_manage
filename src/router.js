@@ -27,6 +27,10 @@ const routes = [{
         name: 'Tianjiashangping',
         component: () => import('./components/Shangpin/Tianjiashangping'),
     }, {
+        path: 'Tianjiajifenshangping',
+        name: 'Tianjiajifenshangping',
+        component: () => import('./components/Shangpin/Tianjiajifenshangping'),
+    }, {
         path: 'Shangpingfenlei',
         name: 'Shangpingfenlei',
         component: () => import('./components/Shangpin/Shangpingfenlei'),
@@ -38,6 +42,10 @@ const routes = [{
         path: 'Yunfeimoban',
         name: 'Yunfeimoban',
         component: () => import('./components/Shangpin/Yunfeimoban'),
+    }, {
+        path: 'Jifenshangpinguanli',
+        name: 'Jifenshangpinguanli',
+        component: () => import('./components/Shangpin/Jifenshangpinguanli'),
     }, ]
 }, {
     path: '/Dingdan',
@@ -47,7 +55,11 @@ const routes = [{
         path: 'Dingdanguanli',
         name: 'Dingdanguanli',
         component: () => import('./components/Dingdan/Dingdanguanli'),
-    }, ]
+    }, {
+        path: 'ShopDingdanguanli',
+        name: 'ShopDingdanguanli',
+        component: () => import('./components/Dingdan/ShopDingdanguanli'),
+    }]
 }, {
     path: '/Wenzhang',
     name: 'Wenzhang',
@@ -153,11 +165,11 @@ const routes = [{
         path: 'Gudingweizhishangping',
         name: 'Gudingweizhishangping',
         component: () => import('./components/Qita/Gudingweizhishangping'),
-    },{
+    }, {
         path: 'Jiangpingliebiao',
         name: 'Jiangpingliebiao',
         component: () => import('./components/Qita/Jiangpingliebiao'),
-    },{
+    }, {
         path: 'Zhongjiangliebiao',
         name: 'Zhongjiangliebiao',
         component: () => import('./components/Qita/Zhongjiangliebiao'),
@@ -191,10 +203,19 @@ const routes = [{
         name: 'Shujuzhongxin',
         component: () => import('./components/Shezhi/Shujuzhongxin'),
     }]
+}, {
+    path: '/Kefu',
+    name: 'Kefu',
+    component: () => import('./components/Kefu'),
+    children: [{
+        path: 'WebSocket',
+        name: 'WebSocket',
+        component: () => import('./components/Kefu/WebSocket'),
+    }]
 }, ]
 
 const router = new VueRouter({
-    mode: 'history',
+    mode: 'hash',
     routes,
 })
 

@@ -102,14 +102,16 @@
           <vxe-table-column title="操作状态" width="200">
             <template slot-scope="scope">
               <div class="flex">
-                <el-button size="small" @click="toEdit(scope.row)" type="text">编辑</el-button>
+                <!-- <el-button size="small" @click="toEdit(scope.row)" type="text">编辑</el-button> -->
                 <el-button size="small" @click="seeMingxi(scope.row)" type="text">查看明细</el-button>
-                <el-button
-                  size="small"
-                  :disabled="!scope.row.identity_card.status == 0"
-                  @click="tongguoshenghe(scope.row)"
-                  type="text"
-                >通过审核</el-button>
+                <template v-if="scope.row.identity_card">
+                  <el-button
+                    size="small"
+                    :disabled="!scope.row.identity_card.status == 0"
+                    @click="tongguoshenghe(scope.row)"
+                    type="text"
+                  >通过审核</el-button>
+                </template>
               </div>
             </template>
           </vxe-table-column>
@@ -256,7 +258,11 @@ export default {
       this.total = res.data.total;
       this.tableData = res.data.data;
       this.tableData.forEach(ele => {
-        ele.myStatus = ele.identity_card.status == 0 ? "未审核" : "已审核";
+        if (ele.identity_card) {
+          ele.myStatus = ele.identity_card.status == 0 ? "未审核" : "已审核";
+        } else {
+          ele.myStatus = "未验证身份";
+        }
       });
     },
     async getMingxiData() {
@@ -321,7 +327,7 @@ export default {
       console.log(res);
       if (res.code == 200) {
         this.$message({
-          message: '已通过',
+          message: "已通过",
           type: "success"
         });
         this.getData();

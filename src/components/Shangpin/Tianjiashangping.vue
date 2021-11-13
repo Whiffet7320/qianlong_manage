@@ -8,7 +8,7 @@
       <div class="tit1">
         <el-tabs v-model="activeName">
           <el-tab-pane label="商品信息" name="1"></el-tab-pane>
-          <!-- <el-tab-pane label="商品详情" name="2"></el-tab-pane> -->
+          <el-tab-pane label="商品详情" name="2"></el-tab-pane>
           <!-- <el-tab-pane label="其他设置" name="3"></el-tab-pane> -->
         </el-tabs>
         <!-- 商品信息 -->
@@ -25,13 +25,6 @@
                 <el-col :span="12">
                   <el-form-item label="商品名称：" prop="name">
                     <el-input size="small" v-model="ruleForm.name"></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="商品二级标题：" prop="sub_title">
-                    <el-input size="small" v-model="ruleForm.sub_title"></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -73,43 +66,20 @@
                     ></el-input>
                   </el-form-item>
                 </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item size="small" label="商品简介：">
-                    <el-input
-                      type="textarea"
-                      v-model="ruleForm.product_info"
-                    ></el-input>
-                  </el-form-item>
-                </el-col>
               </el-row>-->
               <el-row>
                 <el-col :span="12">
-                  <el-form-item label="商品详情图：" prop="detail_img">
-                    <div @click="companyList('xqt')" class="myImg">
-                      <el-image
-                        :src="ruleForm.detail_img"
-                        fit="fill"
-                        style="width: 70px; height: 70px"
-                      >
-                        <div slot="error" class="image-slot">
-                          <i class="el-icon-picture-outline"></i>
-                        </div>
-                      </el-image>
-                      <div @click.stop="delImg('xqt')" class="closeBtn">
-                        <el-button circle>×</el-button>
-                      </div>
-                    </div>
+                  <el-form-item size="small" label="商品简介：">
+                    <el-input type="textarea" v-model="ruleForm.desc" :rows="4"></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row>
                 <el-col :span="12">
-                  <el-form-item label="商品主图：" prop="main_img">
+                  <el-form-item label="商品主图：" prop="preview_image">
                     <div @click="companyList('zt')" class="myImg">
                       <el-image
-                        :src="ruleForm.main_img"
+                        :src="ruleForm.preview_image"
                         fit="fill"
                         style="width: 70px; height: 70px"
                       >
@@ -126,11 +96,11 @@
               </el-row>
               <el-row>
                 <el-col :span="12">
-                  <el-form-item label="商品浏览图：" prop="prev_images">
+                  <el-form-item label="商品浏览图：" prop="gallery_images">
                     <div
                       @click="companyList('llt', i)"
                       class="myImg"
-                      v-for="(item, i) in ruleForm.prev_images"
+                      v-for="(item, i) in ruleForm.gallery_images"
                       :key="i"
                     >
                       <el-image :src="item" fit="fill" style="width: 70px; height: 70px">
@@ -155,7 +125,7 @@
                   </el-form-item>
                 </el-col>
               </el-row>
-              <el-row>
+              <!-- <el-row>
                 <el-col :span="12">
                   <el-form-item label="商品类型：" prop="type">
                     <el-radio-group v-model="ruleForm.type">
@@ -163,6 +133,27 @@
                       <el-radio label="1">报价</el-radio>
                       <el-radio label="2">商场商品</el-radio>
                     </el-radio-group>
+                  </el-form-item>
+                </el-col>
+              </el-row>-->
+              <el-row v-if="!shopObj">
+                <el-col :span="12">
+                  <el-form-item label="零件编码(oe)：">
+                    <el-input size="small" v-model="ruleForm.oe"></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="12">
+                  <el-form-item label="重量(g)：" prop="weight">
+                    <el-input size="small" v-model="ruleForm.weight"></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="12">
+                  <el-form-item label="库存：" prop="stock">
+                    <el-input size="small" v-model="ruleForm.stock"></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -173,29 +164,20 @@
                   </el-form-item>
                 </el-col>
               </el-row>
-              <!-- <el-row>
+              <el-row>
                 <el-col :span="12">
                   <el-form-item label="选择规格：">
                     <div class="sku" v-for="(item1, index) in sku" :key="index">
                       <div class="tit1">
                         <div class="txt1-1">{{ item1.tit }}</div>
-                        <i
-                          @click="removeskuda(index)"
-                          class="el-icon-error"
-                        ></i>
+                        <i @click="removeskuda(index)" class="el-icon-error"></i>
                       </div>
-                      <div
-                        class="tit2"
-                        v-for="(item2, i) in item1.arr"
-                        :key="i"
-                      >
+                      <div class="tit2" v-for="(item2, i) in item1.arr" :key="i">
                         <div class="blue"></div>
                         <div class="txt1">{{ item2 }}</div>
-                        <div @click="removeskuxiao(index, i)" class="txt2">
-                          ×
-                        </div>
+                        <!-- <div @click="removeskuxiao(index, i)" class="txt2">×</div> -->
                       </div>
-                      <div class="addGg">
+                      <!-- <div class="addGg">
                         <el-input
                           size="small"
                           placeholder="请输入属性名称"
@@ -209,23 +191,14 @@
                             添加
                           </el-button>
                         </el-input>
-                      </div>
+                      </div>-->
                     </div>
                     <div class="footer" v-if="!isAdd">
-                      <el-button
-                        @click="isAdd = true"
-                        size="small"
-                        type="primary"
-                      >
+                      <el-button @click="isAdd = true" size="small" type="primary">
                         <span style="font-size: 12px">+</span>
-                        添加新规格</el-button
-                      >
-                      <el-button
-                        @click="changeTable"
-                        size="small"
-                        type="success"
-                        >立即生成</el-button
-                      >
+                        添加新规格
+                      </el-button>
+                      <el-button @click="changeTable" size="small" type="success">立即生成</el-button>
                     </div>
                     <div class="footer footer2" v-if="isAdd">
                       <div class="tit1">
@@ -234,18 +207,11 @@
                       </div>
                       <div class="tit1">
                         <div class="txt1 txt2">规格值：</div>
-                        <el-input
-                          size="small"
-                          v-model="addSkuDa.ggz"
-                        ></el-input>
+                        <el-input size="small" v-model="addSkuDa.ggz"></el-input>
                       </div>
                       <div class="btns">
-                        <el-button @click="addskuda" size="small" type="primary"
-                          >确定</el-button
-                        >
-                        <el-button @click="isAdd = false" size="small"
-                          >取消</el-button
-                        >
+                        <el-button @click="addskuda" size="small" type="primary">确定</el-button>
+                        <el-button @click="isAdd = false" size="small">取消</el-button>
                       </div>
                     </div>
                     <div v-if="skuTableData.length > 0" class="mySkuTable">
@@ -255,121 +221,16 @@
                           :key="item.tit"
                           :field="item.tit"
                           :title="item.tit"
-                          width="70"
+                          width="120"
                           show-overflow="title"
-                        ></vxe-table-column>
-                        <vxe-table-column field="pic" width="62" title="图片">
-                          <template #default="{ row, rowIndex }">
-                            <div @click="companyList('sku', rowIndex)">
-                              <el-image
-                                fit="fill"
-                                style="
-                                  width: 40px;
-                                  height: 40px;
-                                  display: block;
-                                  cursor: pointer;
-                                  border: 1px solid #ddd;
-                                "
-                                :src="row.pic"
-                              >
-                                <div slot="error" class="image-slot">
-                                  <i class="el-icon-picture-outline"></i>
-                                </div>
-                              </el-image>
-                            </div>
-                          </template>
-                        </vxe-table-column>
-                        <vxe-table-column
-                          field="price"
-                          width="130"
-                          title="售价"
                         >
-                          <template #default="{ row }">
-                            <el-input
-                              type="number"
-                              v-model="row.price"
-                            ></el-input>
-                          </template>
-                        </vxe-table-column>
-                        <vxe-table-column
-                          field="cost"
-                          width="130"
-                          title="成本价"
-                        >
-                          <template #default="{ row }">
-                            <el-input
-                              type="number"
-                              v-model="row.cost"
-                            ></el-input>
-                          </template>
-                        </vxe-table-column>
-                        <vxe-table-column
-                          field="ot_price"
-                          width="130"
-                          title="原价"
-                        >
-                          <template #default="{ row }">
-                            <el-input
-                              type="number"
-                              v-model="row.ot_price"
-                            ></el-input>
-                          </template>
-                        </vxe-table-column>
-                        <vxe-table-column
-                          field="stock"
-                          width="130"
-                          title="库存"
-                        >
-                          <template #default="{ row }">
-                            <el-input
-                              type="number"
-                              v-model="row.stock"
-                            ></el-input>
-                          </template>
-                        </vxe-table-column>
-                        <vxe-table-column
-                          field="weight"
-                          width="130"
-                          title="重量(KG)"
-                        >
-                          <template #default="{ row }">
-                            <el-input
-                              type="number"
-                              v-model="row.weight"
-                            ></el-input>
-                          </template>
-                        </vxe-table-column>
-                        <vxe-table-column
-                          field="volume"
-                          width="130"
-                          title="体积(m³)"
-                        >
-                          <template #default="{ row }">
-                            <el-input
-                              type="number"
-                              v-model="row.volume"
-                            ></el-input>
-                          </template>
-                        </vxe-table-column>
-                        <vxe-table-column
-                          field="volume"
-                          width="100"
-                          title="操作"
-                        >
-                          <template #default="{ rowIndex }">
-                            <el-button
-                              @click="delTabSku(rowIndex)"
-                              size="small"
-                              type="text"
-                              >删除</el-button
-                            >
-                          </template>
+                          <!-- <el-input size="small" v-model="item.arr[0]"></el-input> -->
                         </vxe-table-column>
                       </vxe-table>
                     </div>
                   </el-form-item>
                 </el-col>
-              </el-row>-->
+              </el-row>
               <!-- <el-row>
                 <el-col :span="12">
                   <el-form-item label="运费：" prop="postage">
@@ -381,13 +242,8 @@
                 </el-col>
               </el-row>-->
               <el-form-item>
-                <!-- <el-button
-                  size="small"
-                  type="primary"
-                  @click="submitForm('ruleForm', '2')"
-                  >下一步</el-button
-                >-->
-                <el-button size="small" type="primary" @click="onSubmitForm('ruleForm')">保存</el-button>
+                <el-button size="small" type="primary" @click="submitForm('ruleForm', '2')">下一步</el-button>
+                <!-- <el-button size="small" type="primary" @click="onSubmitForm('ruleForm')">保存</el-button> -->
                 <!-- <el-button @click="resetForm('ruleForm')">重置</el-button> -->
               </el-form-item>
             </el-form>
@@ -405,7 +261,8 @@
           </el-row>
           <div class="btnflex">
             <el-button size="small" @click="submitForm('ruleForm', '1')">上一步</el-button>
-            <el-button size="small" type="primary" @click="submitForm('ruleForm', '3')">下一步</el-button>
+            <!-- <el-button size="small" type="primary" @click="submitForm('ruleForm', '3')">下一步</el-button> -->
+            <el-button size="small" type="primary" @click="onSubmitForm('ruleForm')">保存</el-button>
           </div>
         </div>
         <!-- 其他设置 -->
@@ -598,7 +455,7 @@ import E from "wangeditor";
 import { mapState } from "vuex";
 export default {
   computed: {
-    ...mapState(["shopObj"])
+    ...mapState(["shopObj", "tabIndex"])
   },
   watch: {
     "qtszForm.ddsz": function() {
@@ -625,6 +482,7 @@ export default {
   },
   data() {
     return {
+      activeNameTab: "",
       content: "",
       ddsz: false,
       yjsz: false,
@@ -634,18 +492,18 @@ export default {
       imgFileArr: [],
       activeName: "1",
       imgArrNum: 0,
-      updateId:'',
+      updateId: "",
       ruleForm: {
         name: "",
         sub_title: "",
         category_id: "",
         price: "",
         detail_img: "",
-        main_img: "",
-        prev_images: [""],
+        preview_image: "",
+        gallery_images: [""],
         status: "",
         type: "",
-        sort:'',
+        sort: ""
       },
       rules: {
         sort: [{ required: true, message: "请输入排序", trigger: "blur" }],
@@ -666,10 +524,10 @@ export default {
         detail_img: [
           { required: true, message: "请上传商品详情图", trigger: "change" }
         ],
-        main_img: [
+        preview_image: [
           { required: true, message: "请上传商品主图", trigger: "change" }
         ],
-        prev_images: [
+        gallery_images: [
           { required: true, message: "请上传商品浏览图", trigger: "change" }
         ],
         postage: [{ required: true, message: "请输入邮费", trigger: "blur" }]
@@ -707,11 +565,15 @@ export default {
     };
   },
   created() {
+    console.log(this.tabIndex);
     this.getData();
   },
   methods: {
     async getData() {
-      const res = await this.$api.categories();
+      this.activeNameTab = this.tabIndex;
+      const res = await this.$api.categories({
+        type: this.activeNameTab == "1" ? "1" : "0"
+      });
       console.log(res);
       res.data.forEach(ele => {
         ele.value = ele.id;
@@ -727,18 +589,28 @@ export default {
       console.log(this.shopObj);
       if (this.shopObj) {
         // 编辑
-        this.ruleForm = {...this.shopObj};
+        this.sku = [];
+        for (const key in this.shopObj.parameter) {
+          this.sku.push({
+            arr: [this.shopObj.parameter[key]],
+            inpVal: "",
+            tit: key
+          });
+        }
+        this.ruleForm = { ...this.shopObj };
         this.ruleForm.status = this.shopObj.status.toString();
-        this.ruleForm.type = this.shopObj.type.toString();
         this.updateId = this.shopObj.id;
-        this.ruleForm.prev_images.push(null)
+        if(this.ruleForm.gallery_images[this.ruleForm.gallery_images.length-1]){
+          this.ruleForm.gallery_images.push(null);
+        }
         delete this.ruleForm.created_at;
         delete this.ruleForm.is_showKG;
         delete this.ruleForm.updated_at;
         delete this.ruleForm._XID;
         delete this.ruleForm.id;
+        this.$set(this.skuTableData, 0, this.ruleForm.parameter);
       }
-      console.log(this.ruleForm)
+      console.log(this.ruleForm, this.skuTableData);
     },
     // 保存
     async onSubmitForm(formName) {
@@ -751,16 +623,25 @@ export default {
       //     return false;
       //   }
       // });
+      console.log(this.ruleForm, this.skuTableData);
+      delete this.skuTableData[0]._XID;
+      delete this.ruleForm.type;
+      delete this.ruleForm.sub_title;
+      delete this.ruleForm.detail_img;
+      // delete this.ruleForm.type;
+      // delete this.ruleForm.type;
       if (!this.shopObj) {
         // 添加
         const res = await this.$api.addItems({
           ...this.ruleForm,
-          category_id:this.ruleForm.category_id [0],
+          parameter: this.skuTableData[0],
+          category_id: this.ruleForm.category_id[1],
+          detail_intro: document.getElementsByClassName("w-e-text")[0].innerHTML
         });
         console.log(res);
-        if (res.code == 200) {
+        if (res) {
           this.$message({
-            message: '添加成功',
+            message: "添加成功",
             type: "success"
           });
           setTimeout(() => {
@@ -770,16 +651,34 @@ export default {
           this.$message.error(res.msg);
           this.getData();
         }
-      }else{
+      } else {
         // 编辑
-        const res = await this.$api.upDateItems({
-          ...this.ruleForm,
-          category_id: typeof this.ruleForm.category_id == 'object' ? this.ruleForm.category_id[0] : this.ruleForm.category_id,
-        },this.updateId);
+        delete this.skuTableData[0]._XID;
+        delete this.ruleForm.type;
+        delete this.ruleForm.sub_title;
+        delete this.ruleForm.detail_img;
+        delete this.ruleForm.oe_id;
+        delete this.ruleForm.created_at;
+        delete this.ruleForm.deleted_at;
+        delete this.ruleForm.myCategory;
+        delete this.ruleForm.myStatus;
+        const res = await this.$api.upDateItems(
+          {
+            ...this.ruleForm,
+             parameter: this.skuTableData[0],
+            detail_intro: document.getElementsByClassName("w-e-text")[0]
+              .innerHTML,
+            category_id:
+              typeof this.ruleForm.category_id == "object"
+                ? this.ruleForm.category_id[1]
+                : this.ruleForm.category_id
+          },
+          this.updateId
+        );
         console.log(res);
-        if (res.code == 200) {
+        if (res) {
           this.$message({
-            message: '修改成功',
+            message: "修改成功",
             type: "success"
           });
           setTimeout(() => {
@@ -886,7 +785,7 @@ export default {
       } else if (val == "zt") {
         this.$set(this.ruleForm, "recommend_image", "");
       } else if (val == "llt") {
-        this.$set(this.ruleForm.prev_images, i, "");
+        this.$set(this.ruleForm.gallery_images, i, "");
       }
       ``;
     },
@@ -978,7 +877,7 @@ export default {
         var file_re = await this.readFileAsBuffer(this.imgFile);
         const res = await this.$api.uploadToken();
         let myData = res.data;
-        console.log(myData)
+        console.log(myData);
         let client = new window.OSS.Wrapper({
           region: myData.region, //oss地址
           accessKeyId: myData.accessKeyId, //ak
@@ -990,21 +889,21 @@ export default {
         var store = `${new Date().getTime()}.${imgtype}`;
         client.put(store, file_re).then(() => {
           //这个结果就是url
-          console.log(store)
+          console.log(store);
           // var oss_imgurl = client.signatureUrl(store);
-          var oss_imgurl = `http://${myData.bucket}.${myData.url}/${store}`
+          var oss_imgurl = `https://${myData.bucket}.${myData.url}/${store}`;
           if (this.imgStatus == "xqt") {
             this.$set(this.ruleForm, "detail_img", oss_imgurl);
           } else if (this.imgStatus == "zt") {
-            this.ruleForm.main_img = oss_imgurl;
+            this.ruleForm.preview_image = oss_imgurl;
           } else if (this.imgStatus == "llt") {
-            this.$set(this.ruleForm.prev_images, this.imgIndex, oss_imgurl);
+            this.$set(this.ruleForm.gallery_images, this.imgIndex, oss_imgurl);
             if (
-              !this.ruleForm.prev_images[this.imgIndex + 1] &&
-              this.ruleForm.prev_images.length != 6
+              !this.ruleForm.gallery_images[this.imgIndex + 1] &&
+              this.ruleForm.gallery_images.length != 6
             ) {
-              this.$set(this.ruleForm.prev_images, this.imgIndex + 1, "");
-              this.imgArrNum = this.ruleForm.prev_images.length - 1;
+              this.$set(this.ruleForm.gallery_images, this.imgIndex + 1, "");
+              this.imgArrNum = this.ruleForm.gallery_images.length - 1;
             } else {
               this.imgArrNum = 6;
             }
@@ -1022,7 +921,7 @@ export default {
       //     return false;
       //   }
       // });
-      console.log(formName, this.ruleForm, this.skuTableData);
+      console.log(formName, this.sku);
       this.activeName = i;
     },
     async qtszOnSubmit() {
@@ -1065,7 +964,7 @@ export default {
           id: this.shopObj.id
         });
         console.log(res);
-        if (res.code == 200) {
+        if (res) {
           this.$message({
             message: res.msg,
             type: "success"
@@ -1094,7 +993,7 @@ export default {
           activity: "0,3"
         });
         console.log(res);
-        if (res.code == 200) {
+        if (res) {
           this.$message({
             message: res.msg,
             type: "success"
@@ -1135,27 +1034,33 @@ export default {
       "redo"
     ];
     this.editor.config.uploadImgServer = "/upload-img";
-    this.editor.config.uploadImgShowBase64 = true; // 使用 base64 保存图片
-    this.editor.config.customUploadImg = async function(
-      resultFiles,
-      insertImgFn
-    ) {
-      // resultFiles 是 input 中选中的文件列表
-      // insertImgFn 是获取图片 url 后，插入到编辑器的方法
-      console.log(resultFiles);
-      var reader = new FileReader();
-      reader.readAsDataURL(resultFiles[0]); //通过文件流将文件转换成Base64字符串
-      reader.onloadend = function() {
-        //将转换结果赋值给img标签
-        // preview.src = reader.result;
-        //输出结果
-        console.log(reader.result);
-        insertImgFn(reader.result);
-      };
-      //   file_re = await that.readFileAsBuffer(resultFiles[0]);
+    // this.editor.config.uploadImgShowBase64 = true; // 使用 base64 保存图片
+    const res = await this.$api.uploadToken();
+    let myData = res.data;
+    let client = new window.OSS.Wrapper({
+      region: myData.region, //oss地址
+      accessKeyId: myData.accessKeyId, //ak
+      accessKeySecret: myData.accessKeySecret, //secret
+      stsToken: myData.stsToken,
+      bucket: myData.bucket //oss名字
+    });
+    this.editor.config.customUploadImg = async (resultFiles, insertImgFn) => {
+      var file_re = await this.readFileAsBuffer(resultFiles[0]);
+      client
+        .put("myImg", file_re)
+        .then(function(res) {
+          // 上传图片，返回结果，将图片插入到编辑器中
+          console.log(res);
+          insertImgFn(res.url);
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
     };
     this.editor.create();
-    // this.getData();
+    if (this.shopObj) {
+      this.editor.txt.html(this.shopObj.detail_intro);
+    }
   }
 };
 </script>

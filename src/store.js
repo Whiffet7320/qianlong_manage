@@ -5,6 +5,9 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    overallIsDot:false,
+    isDotNum:[],
+    havaMessage:false,
     // 如师傅
     shopObj: null,
     zijinmingxiliebiaoPage: 1, //用户-资金余额明细列表
@@ -15,6 +18,8 @@ export default new Vuex.Store({
     shifuliebiaoPageSize: 10,
     shangpingliebiaoPage: 1, //商品列表
     shangpingliebiaoPageSize: 10,
+    jifenshangpingliebiaoPage: 1, //商品列表
+    jifenshangpingliebiaoPageSize: 10,
     lunbotuliebiaoPage: 1, //轮播图列表
     lunbotuliebiaoPageSize: 10,
     wenzhangObj:null,
@@ -36,6 +41,12 @@ export default new Vuex.Store({
     jiangpingliebiaoPageSize: 10,
     zhongjiangliebiaoPage: 1, //中奖列表
     zhongjiangliebiaoPageSize: 10,
+    dingdanliebiaoPage: 1, //服务订单列表
+    dingdanliebiaoPageSize: 10,
+    ShopdingdanliebiaoPage: 1, //商品订单列表
+    ShopdingdanliebiaoPageSize: 10,
+    tabIndex:'1',
+    tabShopIndex:'1',
     // 
     userInfo: null,
     headerTit: '',
@@ -43,8 +54,6 @@ export default new Vuex.Store({
     yunfeimubanliebiaoPageSize: 10,
     shangpingpinglunPage: 1, //商品评论
     shangpingpinglunPageSize: 10,
-    dingdanliebiaoPage: 1, //订单列表
-    dingdanliebiaoPageSize: 10,
     pintuanShangpingliebiaoPage: 1, //拼团管理-拼团商品列表
     pintuanShangpingliebiaoPageSize: 10,
     pintuanShangpingliebiaoShopPage: 1, //拼团管理-拼团列表-添加商品
@@ -68,7 +77,22 @@ export default new Vuex.Store({
     pingtuanjiluPageSize: 10,
   },
   mutations: {
+    havaMessage(state, str) {
+      state.havaMessage = str;
+    },
+    overallIsDot(state, str) {
+      state.overallIsDot = str;
+    },
+    isDotNum(state, str) {
+      state.isDotNum = str;
+    },
     // 如师傅
+    tabIndex(state, str) {
+      state.tabIndex = str;
+    },
+    tabShopIndex(state, str) {
+      state.tabShopIndex = str;
+    },
     wenzhangObj(state, str) {
       state.wenzhangObj = str;
     },
@@ -89,6 +113,12 @@ export default new Vuex.Store({
     },
     shifuliebiaoPageSize(state, str) {
       state.shifuliebiaoPageSize = str;
+    },
+    jifenshangpingliebiaoPage(state, str) {
+      state.jifenshangpingliebiaoPage = str;
+    },
+    jifenshangpingliebiaoPageSize(state, str) {
+      state.jifenshangpingliebiaoPageSize = str;
     },
     shangpingliebiaoPage(state, str) {
       state.shangpingliebiaoPage = str;
@@ -150,6 +180,18 @@ export default new Vuex.Store({
     zhongjiangliebiaoPageSize(state, str) {
       state.zhongjiangliebiaoPageSize = str;
     },
+    dingdanliebiaoPage(state, str) {
+      state.dingdanliebiaoPage = str;
+    },
+    dingdanliebiaoPageSize(state, str) {
+      state.dingdanliebiaoPageSize = str;
+    },
+    ShopdingdanliebiaoPage(state, str) {
+      state.ShopdingdanliebiaoPage = str;
+    },
+    ShopdingdanliebiaoPageSize(state, str) {
+      state.ShopdingdanliebiaoPageSize = str;
+    },
 
     // 
     userInfo(state, str) {
@@ -157,12 +199,6 @@ export default new Vuex.Store({
     },
     headerTit(state, str) {
       state.headerTit = str;
-    },
-    dingdanliebiaoPage(state, str) {
-      state.dingdanliebiaoPage = str;
-    },
-    dingdanliebiaoPageSize(state, str) {
-      state.dingdanliebiaoPageSize = str;
     },
     shopObj(state, str) {
       state.shopObj = str;

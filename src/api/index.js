@@ -7,22 +7,18 @@ axios.defaults.headers['Content-Type'] = "application/json;charset=UTF-8";
 let myPost = axios.create({
     baseURL: urls.baseUrl,
     method: 'post',
-    timeout: 1000,
 })
 let myGet = axios.create({
     baseURL: urls.baseUrl,
     method: 'get',
-    timeout: 1000,
 })
 let myDelete = axios.create({
     baseURL: urls.baseUrl,
     method: 'delete',
-    timeout: 1000,
 })
 let myPut = axios.create({
     baseURL: urls.baseUrl,
     method: 'put',
-    timeout: 1000,
 })
 
 myPut.interceptors.request.use(config => {
@@ -77,8 +73,8 @@ myGet.interceptors.request.use(config => {
 })
 myPost.interceptors.response.use(response => {
     // console.log(response)
-    if (response.status === 200) {
-        return response.data
+    if (response.status >= 200 && response.status <= 300) {
+        return response
     }
     // if (response.status === 200 && response.data.code == '200') {
     //     vue.$message({
@@ -97,7 +93,7 @@ myPost.interceptors.response.use(response => {
     if (error.response.status === 500) {
         console.log(vue)
         if (error.response.data.info != '参数错误') {
-            vue.$message.error(error.response.data.info);
+            vue.$message.error(error.response.data.message);
         }
     } else if (error.response.status === 401) {
         sessionStorage.setItem("isLogin", false);
@@ -118,14 +114,12 @@ myPost.interceptors.response.use(response => {
         });
         return Promise.reject();
     } else {
-        if (error.response.data.info != '参数错误') {
-            vue.$message.error(error.response.data.info);
-        }
+        vue.$message.error(error.response.data.message);
     }
 })
 myGet.interceptors.response.use(response => {
-    if (response.status === 200) {
-        return response.data
+    if (response.status >= 200 && response.status <= 300) {
+        return response
     }
     // if (response.status === 200 && response.data.code == '200') {
     //     vue.$message({
@@ -143,7 +137,7 @@ myGet.interceptors.response.use(response => {
     console.log(error);
     if (error.response.status === 500) {
         if (error.response.data.info != '参数错误') {
-            vue.$message.error(error.response.data.info);
+            vue.$message.error(error.response.data.message);
         }
     } else if (error.response.status === 401) {
         sessionStorage.setItem("isLogin", false);
@@ -164,15 +158,13 @@ myGet.interceptors.response.use(response => {
         });
         return Promise.reject();
     } else {
-        if (error.response.data.info != '参数错误') {
-            vue.$message.error(error.response.data.info);
-        }
+        vue.$message.error(error.response.data.message);
     }
 })
 myPut.interceptors.response.use(response => {
     // console.log(response)
-    if (response.status === 200) {
-        return response.data
+    if (response.status >= 200 && response.status <= 300) {
+        return response
     }
     // if (response.status === 200 && response.data.code == '200') {
     //     vue.$message({
@@ -191,7 +183,7 @@ myPut.interceptors.response.use(response => {
     if (error.response.status === 500) {
         console.log(vue)
         if (error.response.data.info != '参数错误') {
-            vue.$message.error(error.response.data.info);
+            vue.$message.error(error.response.data.message);
         }
     } else if (error.response.status === 401) {
         sessionStorage.setItem("isLogin", false);
@@ -212,15 +204,13 @@ myPut.interceptors.response.use(response => {
         });
         return Promise.reject();
     } else {
-        if (error.response.data.info != '参数错误') {
-            vue.$message.error(error.response.data.info);
-        }
+        vue.$message.error(error.response.data.message);
     }
 })
 myDelete.interceptors.response.use(response => {
     // console.log(response)
-    if (response.status === 200) {
-        return response.data
+    if (response.status >= 200 && response.status <= 300) {
+        return response
     }
     // if (response.status === 200 && response.data.code == '200') {
     //     vue.$message({
@@ -239,7 +229,7 @@ myDelete.interceptors.response.use(response => {
     if (error.response.status === 500) {
         console.log(vue)
         if (error.response.data.info != '参数错误') {
-            vue.$message.error(error.response.data.info);
+            vue.$message.error(error.response.data.message);
         }
     } else if (error.response.status === 401) {
         sessionStorage.setItem("isLogin", false);
@@ -260,9 +250,7 @@ myDelete.interceptors.response.use(response => {
         });
         return Promise.reject();
     } else {
-        if (error.response.data.info != '参数错误') {
-            vue.$message.error(error.response.data.info);
-        }
+        vue.$message.error(error.response.data.message);
     }
 })
 
@@ -291,9 +279,12 @@ export default {
             }
         })
     },
-    categories() {
+    categories(obj) {
         return myGet({
             url: urls.categories,
+            params: {
+                ...obj
+            }
         })
     },
     addCategories(obj) {
@@ -312,12 +303,70 @@ export default {
             }
         })
     },
+    area(obj) {
+        return myGet({
+            url: urls.area,
+            params: {
+                ...obj
+            }
+        })
+    },
     items(obj) {
         return myGet({
             url: urls.items,
             params: {
                 ...obj
             }
+        })
+    },
+    scoreItems(obj) {
+        return myGet({
+            url: urls.scoreItems,
+            params: {
+                ...obj
+            }
+        })
+    },
+    postage(obj) {
+        return myGet({
+            url: urls.postage,
+            params: {
+                ...obj
+            }
+        })
+    },
+    addPostage(obj) {
+        return myPost({
+            url: urls.postage,
+            data: {
+                ...obj
+            }
+        })
+    },
+    upDatePostage(obj, id) {
+        return myPut({
+            url: `${urls.postage}/${id}`,
+            data: {
+                ...obj
+            }
+        })
+    },
+    deletePostage(id) {
+        return myDelete({
+            url: `${urls.postage}/${id}`,
+        })
+    },
+    upDateScoreItems(obj, id) {
+        return myPut({
+            url: `${urls.scoreItems}/${id}`,
+            data: {
+                ...obj
+            }
+        })
+    },
+    deleteScoreItems(id) {
+        return myDelete({
+            url: `${urls.scoreItems}/${id}`,
         })
     },
     addItems(obj) {
@@ -331,6 +380,40 @@ export default {
     upDateItems(obj, id) {
         return myPut({
             url: `${urls.items}/${id}`,
+            data: {
+                ...obj
+            }
+        })
+    },
+    deleteItems(id) {
+        return myDelete({
+            url: `${urls.items}/${id}`,
+        })
+    },
+    scoreItemSku(obj) {
+        return myGet({
+            url: urls.scoreItemSku,
+            params: {
+                ...obj
+            }
+        })
+    },
+    addScoreItemSku(obj) {
+        return myPost({
+            url: urls.scoreItemSku,
+            data: {
+                ...obj
+            }
+        })
+    },
+    deleteScoreItemSku(id) {
+        return myDelete({
+            url: `${urls.scoreItemSku}/${id}`,
+        })
+    },
+    upDateScoreItemSku(obj, id) {
+        return myPut({
+            url: `${urls.scoreItemSku}/${id}`,
             data: {
                 ...obj
             }
@@ -397,6 +480,54 @@ export default {
     articlesTypes() {
         return myGet({
             url: urls.articlesTypes,
+        })
+    },
+    orders(obj) {
+        return myGet({
+            url: urls.orders,
+            params: {
+                ...obj
+            }
+        })
+    },
+    ordersFahuo(obj, id) {
+        return myPut({
+            url: `${urls.orders}/${id}/delivery`,
+            data: {
+                ...obj
+            }
+        })
+    },
+    chatRooms(obj) {
+        return myGet({
+            url: urls.chatRooms,
+            params: {
+                ...obj
+            }
+        })
+    },
+    chatHistory(obj) {
+        return myGet({
+            url: urls.chatHistory,
+            params: {
+                ...obj
+            }
+        })
+    },
+    afterSale(obj) {
+        return myGet({
+            url: urls.afterSale,
+            params: {
+                ...obj
+            }
+        })
+    },
+    upDateAfterSale(obj, id) {
+        return myPut({
+            url: `${urls.afterSale}/${id}`,
+            data: {
+                ...obj
+            }
         })
     },
     banners(obj) {
@@ -510,7 +641,7 @@ export default {
     addFixedPosition(obj) {
         return myPost({
             url: urls.fixedPosition,
-            data:{
+            data: {
                 ...obj
             }
         })
@@ -539,7 +670,7 @@ export default {
     addFixedPositionItem(obj) {
         return myPost({
             url: urls.fixedPositionItem,
-            data:{
+            data: {
                 ...obj
             }
         })
@@ -573,7 +704,7 @@ export default {
     addTurntableItem(obj) {
         return myPost({
             url: urls.turntableItem,
-            data:{
+            data: {
                 ...obj
             }
         })
@@ -602,6 +733,22 @@ export default {
     upDateAwards(obj, id) {
         return myPut({
             url: `${urls.awards}/${id}`,
+            data: {
+                ...obj
+            }
+        })
+    },
+    goodsOrder(obj) {
+        return myGet({
+            url: urls.goodsOrder,
+            params: {
+                ...obj
+            }
+        })
+    },
+    goodsOrderFahuo(obj, id) {
+        return myPut({
+            url: `${urls.goodsOrder}/${id}/delivery`,
             data: {
                 ...obj
             }

@@ -11,14 +11,15 @@
         <vxe-table align="center" :data="tableData">
           <vxe-table-column field="id" title="ID"></vxe-table-column>
           <vxe-table-column field="name" title="模板名称"></vxe-table-column>
-          <vxe-table-column field="myType" title="分类"></vxe-table-column>
-          <vxe-table-column field="sort" title="排序"></vxe-table-column>
-          <vxe-table-column field="add_time" title="添加时间"></vxe-table-column>
+          <vxe-table-column field="first_weight" title="首重"></vxe-table-column>
+          <vxe-table-column field="first_price" title="首重价格"></vxe-table-column>
+          <vxe-table-column field="continue_weight" title="续重"></vxe-table-column>
+          <vxe-table-column field="continue_price" title="续重价格"></vxe-table-column>
           <vxe-table-column title="操作" width="180">
             <template slot-scope="scope">
               <div class="flex">
-                <!-- <el-button size="small" type="text" @click="tabEdit(scope.row)">编辑</el-button> -->
-                <el-button size="small" type="text" @click="tabDel(scope.row)">删除</el-button>
+                <el-button size="small" type="text" @click="tabEdit(scope.row)">编辑</el-button>
+                <el-button size="small" disabled type="text" @click="tabDel(scope.row)">删除</el-button>
               </div>
             </template>
           </vxe-table-column>
@@ -39,56 +40,83 @@
     <el-dialog
       title="运费模板"
       :visible.sync="addPostageDialogVisible"
-      width="60%"
+      width="800px"
       :before-close="addPostageHandleClose"
     >
       <div class="myForm">
         <el-form ref="form" :model="addPostageForm" label-width="130px">
-          <el-form-item label="模板名称：">
-            <el-input size="small" v-model="addPostageForm.name"></el-input>
-          </el-form-item>
-          <el-form-item label="计费方式：">
-            <el-radio-group v-model="addPostageForm.type">
-              <el-radio label="1">按件数</el-radio>
-              <el-radio label="2">按重量</el-radio>
-            </el-radio-group>
-          </el-form-item>
+          <el-row>
+            <el-col :span="18">
+              <el-form-item label="模板名称：">
+                <el-input size="small" v-model="addPostageForm.name"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="18">
+              <el-form-item label="是否包邮：">
+                <el-radio-group v-model="addPostageForm.is_free">
+                  <el-radio label="1">是</el-radio>
+                  <el-radio label="0">否</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="首重(g)：">
+                <el-input type="number" size="small" v-model="addPostageForm.first_weight"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="首重价格(元)：">
+                <el-input type="number" size="small" v-model="addPostageForm.first_price"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="续重(g)：">
+                <el-input type="number" size="small" v-model="addPostageForm.continue_weight"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="续重价格(元)：">
+                <el-input type="number" size="small" v-model="addPostageForm.continue_price"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-form-item label="配送区域及运费：">
             <div class="mySkuaddPostageTable">
               <vxe-table border align="center" :data="addPostageData1">
-                <vxe-table-column field="name" width="130" title="可配送区域">
+                <vxe-table-column field="name" width="200" title="可配送区域">
                   <template #default="{ row }">
-                    <el-input disabled v-model="row.region[0].name"></el-input>
+                    <el-input disabled v-model="row.regionName"></el-input>
                   </template>
                 </vxe-table-column>
-                <vxe-table-column field="first" width="130" title="首件">
+                <!-- <vxe-table-column field="first" width="130" title="首件">
                   <template #default="{ row }">
                     <el-input type="number" v-model="row.first"></el-input>
                   </template>
-                </vxe-table-column>
-                <vxe-table-column field="price" width="130" title="运费（元）">
+                </vxe-table-column>-->
+                <vxe-table-column field="first_price" width="130" title="首重价格(元)">
                   <template #default="{ row }">
-                    <el-input type="number" v-model="row.price"></el-input>
+                    <el-input type="number" v-model="row.first_price"></el-input>
                   </template>
                 </vxe-table-column>
-                <vxe-table-column field="continue" width="130" title="续件">
+                <!-- <vxe-table-column field="continue" width="130" title="续件">
                   <template #default="{ row }">
                     <el-input type="number" v-model="row.continue"></el-input>
                   </template>
-                </vxe-table-column>
-                <vxe-table-column field="continue_price" width="130" title="续费（元）">
+                </vxe-table-column>-->
+                <vxe-table-column field="continue_price" width="130" title="续重价格(元)">
                   <template #default="{ row }">
                     <el-input type="number" v-model="row.continue_price"></el-input>
                   </template>
                 </vxe-table-column>
                 <vxe-table-column field="volume" width="170" title="操作">
                   <template #default="{ rowIndex }">
-                    <el-button
-                      :disabled="rowIndex == 0"
-                      @click="delyunfeiTabSku(rowIndex)"
-                      size="small"
-                      type="text"
-                    >删除</el-button>
+                    <el-button @click="delyunfeiTabSku(rowIndex)" size="small" type="text">删除</el-button>
                   </template>
                 </vxe-table-column>
               </vxe-table>
@@ -99,9 +127,6 @@
               <span style="font-size: 12px">+</span>
               单独添加配送区域
             </el-button>
-          </el-form-item>
-          <el-form-item label="排序：">
-            <el-input size="small" v-model="addPostageForm.sort"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button @click="addShengshiquOnSubmit" size="small" type="primary">立即提交</el-button>
@@ -129,31 +154,12 @@
             v-model="peisongCheckedCities"
             @change="peisongHandleCheckedCitiesChange"
           >
-            <el-popover
-              v-for="(city,i) in shengJson"
-              :key="i"
-              placement="bottom"
-              width="320"
-              trigger="hover"
-            >
-              <el-checkbox-group
-                v-model="city.peisongCheckedCities"
-                @change="checked=>peisongHandleCheckedCitiesChange2(checked, city)"
-              >
-                <!-- 市 -->
-                <el-checkbox
-                  class="shi"
-                  v-for="(item,index) in city.children"
-                  :key="index"
-                  :label="item"
-                >{{item}}</el-checkbox>
-              </el-checkbox-group>
-              <el-checkbox
-                @change="checked=>peisongChange(checked, city)"
-                slot="reference"
-                :label="city"
-              >{{city.shengVal}}</el-checkbox>
-            </el-popover>
+            <el-checkbox
+              v-for="ele in cityData"
+              :key="ele.id"
+              @change="checked=>peisongChange(checked, ele)"
+              :label="ele"
+            >{{ele.name}}</el-checkbox>
           </el-checkbox-group>
         </div>
         <el-button
@@ -186,6 +192,9 @@ export default {
   },
   data() {
     return {
+      isEditId :'',
+      isEdit: false,
+      cityData: [],
       tableData: [],
       total: 0,
       // 选择可配送区域
@@ -198,8 +207,12 @@ export default {
       // 添加配送模板
       addPostageDialogVisible: false,
       addPostageForm: {
-        appoint: "0",
+        is_free: "",
         name: "",
+        first_weight: "",
+        first_price: "",
+        continue_price: "",
+        continue_weight: "",
         type: "1",
         region_info: [],
         sort: "",
@@ -207,14 +220,12 @@ export default {
       },
       // 批量addPostageSku表格
       addPostageData1: [
-        {
-          region: [{ name: "默认全国", children: [] }],
-          first: 1,
-          price: 0,
-          continue: 1,
-          continue_price: 0,
-          regionName: "默认全国"
-        }
+        // {
+        //   region: [{ name: "默认全国", children: [] }],
+        //   price: 0,
+        //   continue_price: 0,
+        //   regionName: "默认全国"
+        // }
       ]
     };
   },
@@ -223,7 +234,7 @@ export default {
   },
   methods: {
     async getData() {
-      const res = await this.$api.list_shipping_templates({
+      const res = await this.$api.postage({
         limit: this.yunfeimubanliebiaoPageSize,
         page: this.yunfeimubanliebiaoPage
       });
@@ -233,33 +244,55 @@ export default {
       this.tableData.forEach(ele => {
         ele.myType = ele.type == "1" ? "按件数" : "按重量";
       });
+      const res2 = await this.$api.area({
+        parent_id: 0
+      });
+      this.cityData = res2.data;
     },
     // 编辑运费模板
     async tabEdit(row) {
+      this.isEdit = true;
+      this.isEditId = row.id;
       this.addPostageDialogVisible = true;
-      const res = await this.$api.detail_shipping_templates({
-        id: row.id
+      row.is_free = row.is_free.toString();
+      this.addPostageForm = { ...row };
+      console.log(this.addPostageForm);
+      this.addPostageData1 = [];
+      for (const key in this.addPostageForm.fee_map) {
+        this.addPostageData1.push(this.addPostageForm.fee_map[key]);
+      }
+      this.addPostageData1.forEach(ele => {
+        ele.regionName = ele.province_name;
       });
-      console.log(res.data);
-      this.addPostageForm = { ...res.data };
-      this.addPostageForm.type = this.addPostageForm.type.toString();
+      console.log(this.addPostageData1);
     },
     // 删除运费模板
     async tabDel(row) {
-      const res = await this.$api.del_shipping_templates({
-        id: row.id
-      });
+      const res = await this.$api.deletePostage(row.id);
       console.log(res);
-      if (res.code == 200) {
+      if (res) {
         this.getData();
         this.$message({
-          message: res.msg,
+          message: "删除成功",
           type: "success"
         });
       }
     },
     // 添加运费模板
     addPostage() {
+      for (const key in this.addPostageForm) {
+        this.addPostageForm[key] = "";
+      }
+      this.addPostageData1 = [
+        // {
+        //   region: [{ name: "默认全国", children: [] }],
+        //   first: 1,
+        //   price: 0,
+        //   continue: 1,
+        //   continue_price: 0,
+        //   regionName: "默认全国"
+        // }
+      ];
       this.addPostageDialogVisible = true;
     },
     addPostageHandleClose() {
@@ -267,75 +300,74 @@ export default {
     },
     addSheng() {
       console.log(this.peisongCheckedCities);
-      let regionName = "";
-      let shengArr = [];
+      var regionName = "";
+      this.addPostageData1 = [];
       this.peisongCheckedCities.forEach(ele => {
-        let cityArr = [];
-        console.log(this.peisongCheckedCities.length);
-        if (this.peisongCheckedCities.length < 2) {
-          regionName += `${ele.shengVal}`;
-        } else {
-          regionName += `${ele.shengVal};`;
-        }
-        ele.peisongCheckedCities.forEach(item => [
-          cityArr.push({
-            name: item
-          })
-        ]);
-        shengArr.push({
-          name: ele.shengVal,
-          children: cityArr
+        this.addPostageData1.push({
+          region: [{ name: regionName }],
+          first_price: 0,
+          continue_price: 0,
+          regionName: ele.name,
+          area_id: ele.id
         });
       });
-      console.log(shengArr);
-      this.addPostageData1.push({
-        region: [{ name: regionName, children: shengArr }],
-        first: 1,
-        price: 0,
-        continue: 1,
-        continue_price: 0,
-        regionName
-      });
-      console.log(regionName);
       this.peisongDialogVisible = false;
     },
     // 运费模板提交
     async addShengshiquOnSubmit() {
       console.log(this.addPostageData1);
-      const region_info = [...this.addPostageData1];
-      region_info.forEach((ele, i) => {
-        console.log(ele.region);
-        if (i == 0) {
-          ele.region = [
-            {
-              name: "默认全国",
-              children: [
-                {
-                  name: "默认全国"
-                }
-              ]
-            }
-          ];
-        } else if (ele.region[0].name.indexOf(";") >= 0) {
-          ele.region = ele.region[0].children;
-        }
-      });
-      console.log(region_info);
-      this.addPostageForm.region_info = region_info;
-      console.log(this.addPostageForm);
-      const res = await this.$api.save_shipping_templates({
-        ...this.addPostageForm
-      });
-      console.log(res);
-      if (res.code == 200) {
-        this.addPostageDialogVisible = false;
-        this.getData();
-        this.$message({
-          message: res.msg,
-          type: "success"
+      var fee_map = {};
+      this.addPostageData1.forEach(ele => {
+        this.$set(fee_map, ele.area_id, {
+          area_id: ele.area_id,
+          continue_price: ele.continue_price,
+          first_price: ele.first_price,
+          province_name: ele.regionName
         });
+      });
+      console.log(fee_map, this.addPostageForm);
+      delete this.addPostageForm.appoint_info;
+      delete this.addPostageForm.region_info;
+      delete this.addPostageForm.sort;
+      delete this.addPostageForm.type;
+      delete this.addPostageForm.myType;
+      delete this.addPostageForm._XID;
+      delete this.addPostageForm.updated_at;
+      delete this.addPostageForm.created_at;
+      if (!this.isEdit) {
+        // 新增
+        const res = await this.$api.addPostage({
+          ...this.addPostageForm,
+          fee_map
+        });
+        console.log(res);
+        if (res) {
+          this.addPostageDialogVisible = false;
+          this.getData();
+          this.$message({
+            message: res.msg,
+            type: "success"
+          });
+        } else {
+          this.$message.error(res.msg);
+        }
       } else {
-        this.$message.error(res.msg);
+        // 修改
+        const res = await this.$api.upDatePostage({
+          ...this.addPostageForm,
+          fee_map
+        },this.isEditId);
+        console.log(res);
+        if (res) {
+          this.addPostageDialogVisible = false;
+          this.getData();
+          this.$message({
+            message: res.msg,
+            type: "success"
+          });
+        } else {
+          this.$message.error(res.msg);
+        }
       }
     },
     // 选择可配送区域
@@ -343,11 +375,16 @@ export default {
       this.peisongDialogVisible = false;
     },
     peisongHandleCheckedCitiesChange(value) {
+      // value.forEach((ele,i)=>{
+      //   if(!ele.id){
+      //     value.splice(i,1);
+      //   }
+      // })
       console.log(value);
       let checkedCount = value.length;
-      this.peisongCheckAll = checkedCount === this.shengJson.length;
+      this.peisongCheckAll = checkedCount === this.cityData.length;
       this.peisongIsIndeterminate =
-        checkedCount > 0 && checkedCount < this.shengJson.length;
+        checkedCount > 0 && checkedCount < this.cityData.length;
     },
     peisongChange(e, city) {
       console.log(e, city);
@@ -355,7 +392,7 @@ export default {
     },
     // 数组中的对象去重
     unique(arr) {
-      return [...new Set(arr)]
+      return [...new Set(arr)];
     },
     peisongHandleCheckedCitiesChange2(e, city) {
       console.log(e, city);
@@ -365,17 +402,7 @@ export default {
     peisongHandleCheckAllChange(val) {
       //全选
       console.log(val);
-      this.peisongCheckedCities = val ? this.shengJson : [];
-      if (this.peisongCheckedCities.length > 0) {
-        this.peisongCheckedCities.forEach(ele => {
-          ele.peisongCheckedCities = ele.children;
-        });
-      } else {
-        this.shengJson.forEach(ele => {
-          ele.peisongCheckedCities = [];
-        });
-      }
-      console.log(this.peisongCheckedCities);
+      this.peisongCheckedCities = val ? this.cityData : [];
       this.peisongIsIndeterminate = false;
     },
     // 删除运费sku
@@ -385,15 +412,15 @@ export default {
     },
     // 单独添加配送区域
     addDandutianjia() {
-      this.shengJson = [];
-      for (const key in this.peisongCityOptions) {
-        this.shengJson.push({
-          shengVal: key,
-          children: this.peisongCityOptions[key],
-          peisongCheckedCities: []
-        });
-      }
-      this.peisongCheckedCities = [];
+      // this.shengJson = [];
+      // for (const key in this.peisongCityOptions) {
+      //   this.shengJson.push({
+      //     shengVal: key,
+      //     children: this.peisongCityOptions[key],
+      //     peisongCheckedCities: []
+      //   });
+      // }
+      // this.peisongCheckedCities = [];
       this.peisongDialogVisible = true;
     },
     // 分页

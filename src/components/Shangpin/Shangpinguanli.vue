@@ -2,21 +2,23 @@
   <div class="index">
     <div class="nav1">
       <div class="tit1">商品管理</div>
-      <div class="tit2">
+      <!-- <div class="tit2">
         <el-tabs v-model="activeName" @tab-click="tabsHandleClick">
           <el-tab-pane label="如商城商品" name="1"></el-tab-pane>
-          <el-tab-pane label="报价商品" name="2"></el-tab-pane>
+          <el-tab-pane label="服务商品" name="2"></el-tab-pane>
         </el-tabs>
-      </div>
+      </div> -->
     </div>
     <div class="nav2">
       <div class="myForm">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="商品分类：">
-            <el-cascader size="small" :options="options" :props="{ checkStrictly: true }" clearable></el-cascader>
+            <el-select size="small" v-model="formInline.category_id" placeholder="请选择">
+              <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="商品搜索：">
-            <el-input size="small" v-model="formInline.user" placeholder="商品搜索"></el-input>
+            <el-input size="small" v-model="formInline.name" placeholder="商品搜索"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button size="small" type="primary" @click="onSubmit">查询</el-button>
@@ -34,14 +36,14 @@
                 <div class="xiala">
                   <el-row :gutter="20">
                     <el-col :span="6">
-                      <div class="item">商品分类：{{row.category_id}}</div>
+                      <div class="item">商品分类：{{row.myCategory}}</div>
                     </el-col>
                     <el-col :span="6">
                       <div class="item">商品创建时间：{{row.created_at}}</div>
                     </el-col>
-                    <!-- <el-col :span="6">
-                      <div class="item">成本价：{{ row.price }}</div>
-                    </el-col>-->
+                    <el-col :span="10">
+                      <div class="item">描述：{{ row.desc }}</div>
+                    </el-col>
                   </el-row>
                   <!-- <div style="margin-top: 16px"></div>
                   <el-row :gutter="20">
@@ -59,16 +61,7 @@
           <vxe-table-column field="id" title="商品ID"></vxe-table-column>
           <vxe-table-column field="role" title="商品主图">
             <template slot-scope="scope">
-              <el-image :src="scope.row.main_img" fit="fill" style="width: 40px; height: 40px">
-                <div slot="error" class="image-slot">
-                  <i class="el-icon-picture-outline"></i>
-                </div>
-              </el-image>
-            </template>
-          </vxe-table-column>
-          <vxe-table-column field="role" title="商品详情图">
-            <template slot-scope="scope">
-              <el-image :src="scope.row.detail_img" fit="fill" style="width: 40px; height: 40px">
+              <el-image :src="scope.row.preview_image" fit="fill" style="width: 40px; height: 40px">
                 <div slot="error" class="image-slot">
                   <i class="el-icon-picture-outline"></i>
                 </div>
@@ -78,7 +71,7 @@
           <vxe-table-column field="role" width="180" title="商品浏览图">
             <template slot-scope="scope">
               <el-image
-                v-for="(item,i) in scope.row.prev_images"
+                v-for="(item,i) in scope.row.gallery_images"
                 :key="i"
                 :src="item"
                 fit="fill"
@@ -92,7 +85,7 @@
           </vxe-table-column>
           <vxe-table-column field="name" title="商品名称"></vxe-table-column>
           <vxe-table-column field="price" title="商品售价"></vxe-table-column>
-          <vxe-table-column field="ficti" title="销量"></vxe-table-column>
+          <vxe-table-column field="weight" title="重量"></vxe-table-column>
           <vxe-table-column field="stock" title="库存"></vxe-table-column>
           <vxe-table-column field="sort" title="排序"></vxe-table-column>
           <vxe-table-column field="myStatus" title="状态(是否上架)">
@@ -104,8 +97,8 @@
             <template slot-scope="scope">
               <div class="flex">
                 <el-button size="small" @click="toEditShop(scope.row)" type="text">编辑</el-button>
-                <el-button size="small" @click="toEditShop(scope.row)" type="text">查看评论</el-button>
-                <el-button size="small" @click="toEditShop(scope.row)" type="text">删除</el-button>
+                <!-- <el-button size="small" @click="toEditShop(scope.row)" type="text">查看评论</el-button> -->
+                <el-button size="small" @click="toDelShop(scope.row)" type="text">删除</el-button>
               </div>
             </template>
           </vxe-table-column>
@@ -129,7 +122,11 @@
 import { mapState } from "vuex";
 export default {
   computed: {
-    ...mapState(["shangpingliebiaoPage", "shangpingliebiaoPageSize"])
+    ...mapState([
+      "shangpingliebiaoPage",
+      "shangpingliebiaoPageSize",
+      "tabIndex"
+    ])
   },
   watch: {
     shangpingliebiaoPage: function(page) {
@@ -139,14 +136,19 @@ export default {
     shangpingliebiaoPageSize: function(pageSize) {
       this.$store.commit("shangpingliebiaoPageSize", pageSize);
       this.getData();
+    },
+    tabIndex: function() {
+      this.activeName = this.tabIndex;
+      console.log(this.activeName);
+      this.getData();
     }
   },
   data() {
     return {
-      activeName: "2",
+      activeName: "1",
       formInline: {
-        user: "",
-        region: ""
+        category_id: "",
+        name: ""
       },
       options: [],
       tableData: [],
@@ -158,20 +160,39 @@ export default {
   },
   methods: {
     async getData() {
+      const res2 = await this.$api.categories();
+      console.log(res2);
+      this.options = res2.data;
+
+      this.activeName = this.tabIndex;
       const res = await this.$api.items({
         limit: this.shangpingliebiaoPageSize,
         page: this.shangpingliebiaoPage
       });
-      console.log(res.data.data);
+      console.log(res);
       this.total = res.data.total;
       this.tableData = res.data.data;
       this.tableData.forEach(ele => {
         ele.myStatus = ele.status == "1" ? true : false;
-        ele.prev_images.forEach(item=>{
-          if(!item){
-            ele.prev_images.pop()
+        ele.gallery_images.forEach(item => {
+          if (!item) {
+            ele.gallery_images.pop();
           }
-        })
+        });
+        const bb = this.options.filter(ele2 => {
+          if (ele2.children.length > 0) {
+            const aa = ele2.children.filter(ele3 => {
+              return ele3.id == ele.category_id;
+            });
+            if(aa.length>0){
+              ele.myCategory = aa[0].name;
+              return aa;
+            }
+          }else{
+            return ele2.id == ele.category_id;
+          }
+        });
+        ele.myCategory = `${bb[0].name}/${ele.myCategory}`
       });
     },
     // 开关（上架/下架）
@@ -183,7 +204,7 @@ export default {
         },
         row.id
       );
-      if (res.code == 200) {
+      if (res) {
         this.$message({
           message: res.msg,
           type: "success"
@@ -196,11 +217,26 @@ export default {
       this.$store.commit("shopObj", row);
       this.$router.push({ name: "Tianjiashangping" });
     },
-    tabsHandleClick(tab, event) {
-      console.log(tab, event);
+    async toDelShop(row) {
+      console.log(row);
+      const res = await this.$api.deleteItems(row.id);
+      if (res) {
+        this.$message({
+          message: '删除成功',
+          type: "success"
+        });
+        this.getData();
+      }
+    },
+    tabsHandleClick(tab) {
+      console.log(tab.index);
+      this.$store.commit("tabIndex", (Number(tab.index) + 1).toString());
+      this.formInline.category_id = "";
+      this.formInline.name = "";
     },
     onSubmit() {
       console.log("submit!");
+      this.getData();
     },
     toAddShop() {
       this.$store.commit("shopObj", null);

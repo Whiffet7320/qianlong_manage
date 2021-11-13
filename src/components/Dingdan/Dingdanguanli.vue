@@ -107,9 +107,9 @@
                 <div class="xiala">
                   <el-row :gutter="20">
                     <el-col :span="6">
-                      <div class="item">服务码：{{ row.order?row.order.code :'无'}}</div>
+                      <div class="item">快递单号：{{ row.delivery_num ? row.delivery_num :'无'}}</div>
                     </el-col>
-                    <el-col :span="6">
+                    <!-- <el-col :span="6">
                       <div
                         class="item"
                       >师傅名称：{{ row.selected_quote? row.selected_quote.user_info.nick_name:'无' }}</div>
@@ -118,7 +118,7 @@
                       <div
                         class="item"
                       >师傅电话：{{ row.selected_quote?row.selected_quote.user.phone:'无' }}</div>
-                    </el-col>
+                    </el-col> -->
                   </el-row>
                   <!-- <el-row :gutter="20">
                     <el-col :span="6">
@@ -134,15 +134,15 @@
                       <div class="item">邮费：{{ row.info.postage }}</div>
                     </el-col>
                   </el-row>-->
-                  <div style="margin-top: 16px"></div>
+                  <!-- <div style="margin-top: 16px"></div>
                   <el-row :gutter="20">
                     <el-col :span="20">
                       <div class="item">用户备注：{{ row.intro ? row.intro : '无' }}</div>
                     </el-col>
-                    <!-- <el-col :span="6">
+                    <el-col :span="6">
                       <div class="item">虚拟销量：3C数码/手机</div>
-                    </el-col>-->
-                  </el-row>
+                    </el-col>
+                  </el-row> -->
                 </div>
               </template>
             </template>
@@ -150,36 +150,32 @@
           <vxe-table-column field="order_num" min-width="180" title="订单号"></vxe-table-column>
           <vxe-table-column min-width="80" field="myStatus" title="订单状态"></vxe-table-column>
           <vxe-table-column min-width="80" field="address.name" title="用户信息"></vxe-table-column>
-          <!-- <vxe-table-column min-width="120" field="myAble_delivery" title="是否要求发货"></vxe-table-column> -->
-          <vxe-table-column
-            show-overflow="title"
-            field="scope.row.item_name"
+          <!-- <vxe-table-column min-width="120" field="myAble_delivery" title="是否要求发货"></vxe-table-column> -->          <vxe-table-column
             min-width="180"
             title="商品信息"
           >
             <template slot-scope="scope">
-              <div class="shopxx">
-                <img class="shopImg" :src="scope.row.images[0]" alt />
+              <div class="shopxx" v-for="ele2 in scope.row.order_items" :key="ele2.id">
+                <img class="shopImg" :src="ele2.image" alt />
                 <div class="txt">
-                  {{ scope.row.item_name }}
+                  {{ ele2.name }}（数量:{{ele2.count}}件{{ele2.sku != '' ? ` 规格:${ele2.sku}` : ''}}） 
                   <!-- {{ scope.row.info.product_detail.attr_info.suk }} -->
                 </div>
               </div>
             </template>
           </vxe-table-column>
-          <vxe-table-column field="order.pay_time" min-width="160" title="支付时间"></vxe-table-column>
-          <vxe-table-column field="order.actual_price" min-width="80" title="实际支付"></vxe-table-column>
+          <vxe-table-column field="pay_time" min-width="160" title="支付时间"></vxe-table-column>
+          <vxe-table-column field="total_price" min-width="80" title="实际支付"></vxe-table-column>
           <!-- <vxe-table-column field="myBuy_way" min-width="80" title="支付状态"></vxe-table-column> -->
           <vxe-table-column title="操作状态" width="100">
             <template slot-scope="scope">
               <div class="flex">
                 <el-button
-                  :disabled='scope.row.order.status == 5'
-                  v-if="scope.row.order"
+                  :disabled='scope.row.status != 1'
                   size="small"
-                  @click="shouhou(scope.row)"
+                  @click="fahuo(scope.row)"
                   type="text"
-                >设为售后</el-button>
+                >发货</el-button>
                 <!-- <el-button size="small" @click="toEditShop(scope.row)" type="text">删除</el-button> -->
               </div>
             </template>
@@ -215,9 +211,9 @@
           <el-form-item label="快递单号" prop="delivery_code">
             <el-input size="small" v-model="fahuoForm.delivery_code"></el-input>
           </el-form-item>
-          <el-form-item label="快递名称" prop="delivery_name">
+          <!-- <el-form-item label="快递名称" prop="delivery_name">
             <el-input size="small" v-model="fahuoForm.delivery_name"></el-input>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item>
             <el-button size="small" type="primary" @click="submitForm('fahuoForm')">发货</el-button>
           </el-form-item>
@@ -276,47 +272,39 @@ export default {
   },
   methods: {
     async getData() {
-      const res = await this.$api.demandQuotes({
+      const res = await this.$api.orders({
         page: this.dingdanliebiaoPage,
         limit: this.dingdanliebiaoPageSize
       });
       console.log(res.data);
       this.total = res.data.total;
       this.tableData = res.data.data;
+      console.log(this.tableData)
       this.tableData.forEach(ele => {
-        if (ele.order) {
-          ele.myStatus =
-            ele.order.status == -1
-              ? "已取消"
-              : ele.order.status == 0
-              ? "未支付"
-              : ele.order.status == 1
-              ? "已支付"
-              : ele.order.status == 3
-              ? "服务中"
-              : ele.order.status == 4
-              ? "已完成"
-              : ele.order.status == 5
-              ? "售后中"
-              : "已完成";
-        } else {
-          ele.myStatus =
-            ele.status == -1 ? "已取消" : ele.status == 0 ? "未选择" : "已选择";
-        }
+        ele.myStatus =
+          ele.status == -2
+            ? "已过期"
+            : ele.status == -1
+            ? "已取消"
+            : ele.status == 0
+            ? "未支付"
+            : ele.status == 1
+            ? "待发货"
+            : ele.status == 2
+            ? "已发货"
+            : "已完成";
       });
     },
     async submitForm(formName) {
       this.$refs[formName].validate(async valid => {
         if (valid) {
-          const res = await this.$api.orderDelivery({
-            id: this.fahuoId,
-            delivery_code: this.fahuoForm.delivery_code,
-            delivery_name: this.fahuoForm.delivery_name
-          });
+          const res = await this.$api.ordersFahuo({
+            delivery_num: this.fahuoForm.delivery_code,
+          },this.fahuoId);
           console.log(res);
-          if (res.code == 200) {
+          if (res) {
             this.$message({
-              message: res.msg,
+              message: '发货成功',
               type: "success"
             });
             this.getData();
@@ -333,11 +321,11 @@ export default {
     onSubmit() {
       console.log(this.form);
     },
-    // fahuo(row) {
-    //   console.log(row);
-    //   this.fahuoId = row.id;
-    //   this.fahuoDialogVisible = true;
-    // },
+    fahuo(row) {
+      console.log(row);
+      this.fahuoId = row.id;
+      this.fahuoDialogVisible = true;
+    },
     async shouhou(row) {
       const res = await this.$api.ordersId({
         status:5
@@ -480,6 +468,7 @@ export default {
 .shopxx {
   display: flex;
   align-items: center;
+  margin: 4px 0;
   .shopImg {
     width: 40px;
     height: 40px;

@@ -148,7 +148,7 @@ export default {
         value:this.lhForm.value
       },this.id)
       console.log(res)
-      if (res.code == 200) {
+      if (res) {
           this.$message({
             message: '修改成功',
             type: "success"
@@ -166,7 +166,7 @@ export default {
           ...this.lhForm
         });
         console.log(res);
-        if (res.code == 200) {
+        if (res) {
           this.$message({
             message: res.msg,
             type: "success"
@@ -183,7 +183,7 @@ export default {
           id: this.id
         });
         console.log(res);
-        if (res.code == 200) {
+        if (res) {
           this.$message({
             message: res.msg,
             type: "success"
@@ -207,7 +207,7 @@ export default {
       const res = await this.$api.article_del({
         id: row.id
       });
-      if (res.code == 200) {
+      if (res) {
         this.$message({
           message: res.msg,
           type: "success"
