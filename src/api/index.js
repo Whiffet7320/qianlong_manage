@@ -271,6 +271,14 @@ export default {
             }
         })
     },
+    updateUsers(obj, id) {
+        return myPut({
+            url: `${urls.users}/${id}`,
+            data: {
+                ...obj
+            }
+        })
+    },
     usersIdMoneyRecords(obj) {
         return myGet({
             url: `${urls.usersIdMoneyRecords}/${obj.id}/money-records`,
@@ -323,6 +331,14 @@ export default {
         return myGet({
             url: urls.scoreItems,
             params: {
+                ...obj
+            }
+        })
+    },
+    addScoreItems(obj) {
+        return myPost({
+            url: urls.scoreItems,
+            data: {
                 ...obj
             }
         })
@@ -448,6 +464,19 @@ export default {
             }
         })
     },
+    afterSaleStatus(id){
+        return myGet({
+            url: `${urls.afterSaleStatus}/${id}`,
+        })
+    },
+    search_itemkeyslist(obj) {
+        return myGet({
+            url: urls.search_itemkeyslist,
+            params: {
+                ...obj
+            }
+        })
+    },
     articles(obj) {
         return myGet({
             url: urls.articles,
@@ -456,10 +485,113 @@ export default {
             }
         })
     },
+    search_itemkeys(obj) {
+        return myPost({
+            url: urls.search_itemkeys,
+            data: {
+                ...obj
+            }
+        })
+    },
+    delSearch_itemkeys(id) {
+        return myDelete({
+            url: `${urls.search_itemkeys}/${id}`,
+        })
+    },
     addArticles(obj) {
         return myPost({
             url: urls.articles,
             data: {
+                ...obj
+            }
+        })
+    },
+    userexamineList(obj) {
+        return myGet({
+            url: urls.userexamineList,
+            params: {
+                ...obj
+            }
+        })
+    },
+    userexamine(obj, id) {
+        return myPut({
+            url: `${urls.userexamine}/${id}`,
+            data: {
+                ...obj
+            }
+        })
+    },
+    delUserexamine(id) {
+        return myGet({
+            url: `${urls.userexamine}/${id}/cancel`,
+        })
+    },
+    supplier(obj) {
+        return myGet({
+            url: urls.supplier,
+            params: {
+                ...obj
+            }
+        })
+    },
+    addSupplier(obj) {
+        return myPost({
+            url: urls.supplier,
+            data: {
+                ...obj
+            }
+        })
+    },
+    upDateSupplier(obj, id) {
+        return myPut({
+            url: `${urls.supplier}/${id}`,
+            data: {
+                ...obj
+            }
+        })
+    },
+    deleteSupplier(id) {
+        return myDelete({
+            url: `${urls.supplier}/${id}`,
+        })
+    },
+    supplierIdOelist(obj,id) {
+        return myGet({
+            url: `${urls.supplierIdOelist}/${id}/oelist`,
+            params: {
+                ...obj
+            }
+        })
+    },
+    addSupplierIdOelist(obj,id) {
+        return myPost({
+            url: `${urls.supplierIdOelist}/${id}/addoe`,
+            data: {
+                ...obj
+            }
+        })
+    },
+    upDateSupplierIdOelist(obj, id) {
+        return myPost({
+            url: `${urls.supplierIdOelist}/${id}/updateoe`,
+            data: {
+                ...obj
+            }
+        })
+    },
+    deleteSupplierIdOelist(obj,id) {
+        return myGet({
+            url: `${urls.supplierIdOelist}/${id}/deloe`,
+            params: {
+                ...obj
+            }
+        })
+    },
+    statistics(obj) {
+        return myGet({
+            url: urls.statistics,
+            params:{
                 ...obj
             }
         })
@@ -477,6 +609,40 @@ export default {
             url: `${urls.articles}/${id}`,
         })
     },
+    scoreRule(obj) {
+        return myPut({
+            url: `${urls.scoreRule}`,
+            data: {
+                ...obj
+            }
+        })
+    },
+    itemsSearch_oe(obj) {
+        return myPost({
+            url: urls.itemsSearch_oe,
+            data:{
+                ...obj
+            }
+        })
+    },
+    getScoreRule() {
+        return myGet({
+            url: urls.scoreRule,
+        })
+    },
+    billRule(obj) {
+        return myPut({
+            url: `${urls.billRule}`,
+            data: {
+                ...obj
+            }
+        })
+    },
+    getBillRule() {
+        return myGet({
+            url: urls.billRule,
+        })
+    },
     articlesTypes() {
         return myGet({
             url: urls.articlesTypes,
@@ -488,6 +654,11 @@ export default {
             params: {
                 ...obj
             }
+        })
+    },
+    orderBillXiangqin(id) {
+        return myGet({
+            url: `${urls.orders}/${id}/bill`,
         })
     },
     ordersFahuo(obj, id) {

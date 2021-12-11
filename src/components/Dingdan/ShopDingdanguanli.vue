@@ -19,86 +19,39 @@
       </el-row>
     </div>-->
     <div class="nav3">
-      <!-- <div class="myForm">
+      <div class="myForm">
         <el-form ref="form" :model="form" label-width="80px">
           <el-row>
             <el-col :span="20">
-              <el-form-item label="订单状态：">
-                <el-radio-group v-model="form.rad1" size="small">
-                  <el-radio-button label="全部"></el-radio-button>
-                  <el-radio-button label="未支付"></el-radio-button>
-                  <el-radio-button label="未发货"></el-radio-button>
-                  <el-radio-button label="待收货"></el-radio-button>
-                  <el-radio-button label="待评价"></el-radio-button>
-                  <el-radio-button label="交易完成"></el-radio-button>
-                  <el-radio-button label="已删除"></el-radio-button>
+              <el-form-item label="售后方式：">
+                <el-radio-group v-model="form.rad1" @change="changeRad1" size="small">
+                  <el-radio-button label="-1">全部</el-radio-button>
+                  <el-radio-button label="0">不退货只退钱</el-radio-button>
+                  <el-radio-button label="1">退货退钱</el-radio-button>
+                  <el-radio-button label="2">换货</el-radio-button>
                 </el-radio-group>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="20">
-              <el-form-item label="支付方式：">
-                <el-radio-group v-model="form.rad2" size="small">
-                  <el-radio-button label="全部"></el-radio-button>
-                  <el-radio-button label="微信支付"></el-radio-button>
-                  <el-radio-button label="支付宝支付"></el-radio-button>
-                  <el-radio-button label="余额支付"></el-radio-button>
-                  <el-radio-button label="线下支付"></el-radio-button>
+              <el-form-item label="售后状态：">
+                <el-radio-group v-model="form.rad2" @change="changeRad2" size="small">
+                  <el-radio-button label="-2">全部</el-radio-button>
+                  <el-radio-button label="-1">取消</el-radio-button>
+                  <el-radio-button label="0">申请</el-radio-button>
+                  <el-radio-button label="1">通过</el-radio-button>
+                  <el-radio-button label="2">拒绝</el-radio-button>
+                  <el-radio-button label="3">买家发给商家</el-radio-button>
+                  <el-radio-button label="4">商家收到买家商品</el-radio-button>
+                  <el-radio-button label="5">商家发给买家</el-radio-button>
+                  <el-radio-button label="6">完成</el-radio-button>
                 </el-radio-group>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="20">
-              <el-form-item label="创建时间：">
-                <el-date-picker
-                  size="small"
-                  v-model="form.time"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                >
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="8">
-              <el-form-item label="搜索：">
-                <div class="search">
-                  <el-input
-                    size="small"
-                    placeholder="请输入内容"
-                    v-model="form.search"
-                    class="input-with-select"
-                  >
-                    <el-select
-                      class="left-select"
-                      v-model="form.select"
-                      slot="prepend"
-                      placeholder="请选择"
-                    >
-                      <el-option label="全部" value="1"></el-option>
-                      <el-option label="订单号" value="2"></el-option>
-                      <el-option label="UID" value="3"></el-option>
-                      <el-option label="用户名称" value="4"></el-option>
-                      <el-option label="用户电话" value="5"></el-option>
-                      <el-option label="商品名称" value="6"></el-option>
-                    </el-select>
-                    <el-button
-                      @click="onSubmit"
-                      slot="append"
-                      icon="el-icon-search"
-                    ></el-button>
-                  </el-input>
-                </div>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
-      </div>-->
+      </div>
       <div class="myTable">
         <vxe-table :data="tableData">
           <vxe-table-column min-width="40" field="myType" title="类型"></vxe-table-column>
@@ -168,9 +121,12 @@
         >
           <el-form-item label="状态">
             <el-select size="small" v-model="fahuoForm.status" placeholder="请选择">
-              <el-option label="通过申请" value="1"></el-option>
-              <el-option label="拒绝申请" value="2"></el-option>
-              <el-option label="卖家寄出" value="5"></el-option>
+              <el-option
+                v-for="item in myFahuoOption"
+                :key="item.op_val"
+                :label="item.op_name"
+                :value="item.op_val"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item v-if="fahuoForm.status == 5" label="快递单号">
@@ -203,10 +159,11 @@ export default {
   },
   data() {
     return {
+      myFahuoOption: [],
       activeName: "3",
       form: {
-        rad1: "",
-        rad2: "",
+        rad1: "-1",
+        rad2: "-2",
         time: [],
         search: "",
         select: ""
@@ -236,7 +193,9 @@ export default {
     async getData() {
       const res = await this.$api.afterSale({
         page: this.ShopdingdanliebiaoPage,
-        limit: this.ShopdingdanliebiaoPageSize
+        limit: this.ShopdingdanliebiaoPageSize,
+        type: this.form.rad1,
+        status: this.form.rad2
       });
       console.log(res.data);
       this.total = res.data.total;
@@ -259,6 +218,12 @@ export default {
         ele.myType =
           ele.type == 0 ? "仅退款" : ele.type == 1 ? "退货退款" : "换货";
       });
+    },
+    changeRad1() {
+      this.getData();
+    },
+    changeRad2() {
+      this.getData();
     },
     async submitForm() {
       const res = await this.$api.upDateAfterSale(
@@ -283,12 +248,14 @@ export default {
     onSubmit() {
       console.log(this.form);
     },
-    fahuo(row) {
-      console.log(row);
+    async fahuo(row) {
+      const res = await this.$api.afterSaleStatus(row.id);
+      console.log(res);
+      this.myFahuoOption = res.data;
       this.fahuoId = row.id;
       this.fahuoDialogVisible = true;
-      this.fahuoForm.seller_delivery_num = '';
-      this.fahuoForm.status = '';
+      this.fahuoForm.seller_delivery_num = "";
+      this.fahuoForm.status = "";
     },
     async shouhou(row) {
       const res = await this.$api.ordersId(

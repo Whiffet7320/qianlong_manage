@@ -57,7 +57,7 @@
               </el-row>-->
               <el-row>
                 <el-col :span="12">
-                  <el-form-item size="small" label="商品简介：">
+                  <el-form-item size="small" label="商品简介：" prop="desc">
                     <el-input type="textarea" v-model="ruleForm.desc" :rows="4"></el-input>
                   </el-form-item>
                 </el-col>
@@ -105,7 +105,7 @@
               </el-row>
               <el-row>
                 <el-col :span="12">
-                  <el-form-item label="商品状态：">
+                  <el-form-item label="商品状态：" prop="status">
                     <el-radio-group v-model="ruleForm.status">
                       <el-radio label="1">上架</el-radio>
                       <el-radio label="0">下架</el-radio>
@@ -115,7 +115,7 @@
               </el-row>
               <el-row>
                 <el-col :span="12">
-                  <el-form-item label="销量：">
+                  <el-form-item label="销量：" prop="sale_count">
                     <el-input size="small" v-model="ruleForm.sale_count"></el-input>
                   </el-form-item>
                 </el-col>
@@ -140,7 +140,7 @@
               </el-row>
               <el-row>
                 <el-col :span="12">
-                  <el-form-item label="排序：">
+                  <el-form-item label="排序：" prop="sort">
                     <el-input size="small" v-model="ruleForm.sort"></el-input>
                   </el-form-item>
                 </el-col>
@@ -189,7 +189,7 @@
                       <div class="tit1">
                         <!-- <div class="txt1 txt2">库存：</div> -->
                         <div class="txt1">库存：</div>
-                        <el-input size="small" v-model="addSkuDa.ggz"></el-input>
+                        <el-input type='number' size="small" v-model="addSkuDa.ggz"></el-input>
                       </div>
                       <div class="btns">
                         <el-button @click="addskuda" size="small" type="primary">确定</el-button>
@@ -496,6 +496,9 @@ export default {
         status: [
           { required: true, message: "请选择商品状态", trigger: "change" }
         ],
+        sale_count: [
+          { required: true, message: "请输入销量", trigger: "blur" }
+        ],
         type: [
           { required: true, message: "请选择商品类型", trigger: "change" }
         ],
@@ -509,7 +512,12 @@ export default {
         image_gallery: [
           { required: true, message: "请上传商品浏览图", trigger: "change" }
         ],
-        postage: [{ required: true, message: "请输入邮费", trigger: "blur" }]
+        postage: [{ required: true, message: "请输入邮费", trigger: "blur" }],
+        price: [{ required: true, message: "请输入价格", trigger: "blur" }],
+        desc: [
+          { required: true, message: "请填写活动形式", trigger: "blur" }
+        ],
+        weight: [{ required: true, message: "请输入重量", trigger: "blur" }]
       },
       addInp: "",
       // 是否添加规格（渲染按钮还是输入框）
@@ -596,6 +604,9 @@ export default {
       //   }
       // });
       console.log(this.ruleForm, this.skuTableData);
+      if (this.skuTableData.length == 0) {
+        this.$message.error("规格值必填");
+      }
       delete this.ruleForm.type;
       delete this.ruleForm.detail_img;
       delete this.skuTableData[0]._XID;
@@ -780,11 +791,11 @@ export default {
     },
     // 添加sku大类
     async addskuda() {
-      if(this.shopObj){
+      if (this.shopObj) {
         await this.$api.addScoreItemSku({
-          name:this.addSkuDa.gg,
-          stock:this.addSkuDa.ggz,
-          score_item_id:this.updateId
+          name: this.addSkuDa.gg,
+          stock: this.addSkuDa.ggz,
+          score_item_id: this.updateId
         });
       }
       if (this.addSkuDa.gg == "" || this.addSkuDa.ggz == "") {
@@ -806,7 +817,7 @@ export default {
     // 删除sku大类
     async removeskuda(index) {
       this.sku.splice(index, 1);
-      await this.$api.deleteScoreItemSku(this.shopObj.skus[index].id)
+      await this.$api.deleteScoreItemSku(this.shopObj.skus[index].id);
     },
     // 删除sku小类
     removeskuxiao(index, i) {

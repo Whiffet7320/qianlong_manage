@@ -19,24 +19,23 @@
       </el-row>
     </div>-->
     <div class="nav3">
-      <!-- <div class="myForm">
+      <div class="myForm">
         <el-form ref="form" :model="form" label-width="80px">
           <el-row>
             <el-col :span="20">
               <el-form-item label="订单状态：">
-                <el-radio-group v-model="form.rad1" size="small">
-                  <el-radio-button label="全部"></el-radio-button>
-                  <el-radio-button label="未支付"></el-radio-button>
-                  <el-radio-button label="未发货"></el-radio-button>
-                  <el-radio-button label="待收货"></el-radio-button>
-                  <el-radio-button label="待评价"></el-radio-button>
-                  <el-radio-button label="交易完成"></el-radio-button>
-                  <el-radio-button label="已删除"></el-radio-button>
+                <el-radio-group v-model="form.rad1" size="small" @change='changRad1'>
+                  <el-radio-button label="-2">全部</el-radio-button>
+                  <el-radio-button label="0">未支付</el-radio-button>
+                  <el-radio-button label="1">待发货</el-radio-button>
+                  <el-radio-button label="2">待收货</el-radio-button>
+                  <el-radio-button label="3">交易完成</el-radio-button>
+                  <el-radio-button label="-1">已取消</el-radio-button>
                 </el-radio-group>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <!-- <el-row>
             <el-col :span="20">
               <el-form-item label="支付方式：">
                 <el-radio-group v-model="form.rad2" size="small">
@@ -63,7 +62,7 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-          </el-row>
+          </el-row> -->
           <el-row>
             <el-col :span="8">
               <el-form-item label="搜索：">
@@ -74,7 +73,7 @@
                     v-model="form.search"
                     class="input-with-select"
                   >
-                    <el-select
+                    <!-- <el-select
                       class="left-select"
                       v-model="form.select"
                       slot="prepend"
@@ -86,7 +85,7 @@
                       <el-option label="用户名称" value="4"></el-option>
                       <el-option label="用户电话" value="5"></el-option>
                       <el-option label="商品名称" value="6"></el-option>
-                    </el-select>
+                    </el-select> -->
                     <el-button
                       @click="onSubmit"
                       slot="append"
@@ -98,7 +97,7 @@
             </el-col>
           </el-row>
         </el-form>
-      </div>-->
+      </div>
       <div class="myTable">
         <vxe-table :data="tableData">
           <vxe-table-column type="expand" width="30" :fixed="null">
@@ -167,7 +166,7 @@
           <vxe-table-column field="pay_time" min-width="160" title="支付时间"></vxe-table-column>
           <vxe-table-column field="total_price" min-width="80" title="实际支付"></vxe-table-column>
           <!-- <vxe-table-column field="myBuy_way" min-width="80" title="支付状态"></vxe-table-column> -->
-          <vxe-table-column title="操作状态" width="100">
+          <vxe-table-column title="操作状态" width="130">
             <template slot-scope="scope">
               <div class="flex">
                 <el-button
@@ -176,6 +175,7 @@
                   @click="fahuo(scope.row)"
                   type="text"
                 >发货</el-button>
+                <el-button size="small" @click="seeFapiao(scope.row)" type="text">发票详情</el-button>
                 <!-- <el-button size="small" @click="toEditShop(scope.row)" type="text">删除</el-button> -->
               </div>
             </template>
@@ -243,7 +243,7 @@ export default {
     return {
       activeName: "3",
       form: {
-        rad1: "",
+        rad1: "-2",
         rad2: "",
         time: [],
         search: "",
@@ -274,7 +274,9 @@ export default {
     async getData() {
       const res = await this.$api.orders({
         page: this.dingdanliebiaoPage,
-        limit: this.dingdanliebiaoPageSize
+        limit: this.dingdanliebiaoPageSize,
+        keyword:this.form.search,
+        status:this.form.rad1
       });
       console.log(res.data);
       this.total = res.data.total;
@@ -294,6 +296,10 @@ export default {
             ? "已发货"
             : "已完成";
       });
+    },
+    changRad1(e){
+      console.log(e)
+      this.getData()
     },
     async submitForm(formName) {
       this.$refs[formName].validate(async valid => {
@@ -320,11 +326,16 @@ export default {
     },
     onSubmit() {
       console.log(this.form);
+      this.getData()
     },
     fahuo(row) {
       console.log(row);
       this.fahuoId = row.id;
       this.fahuoDialogVisible = true;
+    },
+    async seeFapiao(row){
+      const res = await this.$api.orderBillXiangqin(row.id)
+      console.log(res)
     },
     async shouhou(row) {
       const res = await this.$api.ordersId({

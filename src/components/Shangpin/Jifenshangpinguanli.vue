@@ -12,16 +12,12 @@
     <div class="nav2">
       <div class="myForm">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="商品分类：">
-            <el-select size="small" v-model="formInline.category_id" placeholder="请选择">
-              <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"></el-option>
-            </el-select>
-          </el-form-item>
           <el-form-item label="商品搜索：">
             <el-input size="small" v-model="formInline.name" placeholder="商品搜索"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button size="small" type="primary" @click="onSubmit">查询</el-button>
+            <el-button size="small" @click="onReact">重置</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -163,7 +159,8 @@ export default {
       this.activeName = this.tabIndex;
       const res = await this.$api.scoreItems({
         limit: this.jifenshangpingliebiaoPageSize,
-        page: this.jifenshangpingliebiaoPage
+        page: this.jifenshangpingliebiaoPage,
+        keyword:this.formInline.name
       });
       console.log(res);
       this.total = res.data.total;
@@ -217,7 +214,12 @@ export default {
       this.formInline.name = "";
     },
     onSubmit() {
-      console.log("submit!");
+      console.log(this.formInline);
+      this.getData();
+    },
+    onReact() {
+      this.formInline.category_id = "";
+      this.formInline.name = "";
       this.getData();
     },
     toAddShop() {

@@ -75,6 +75,14 @@ export default new Vuex.Store({
     jishouliebiaoPageSize: 10,
     pingtuanjiluPage: 1, //拼团记录
     pingtuanjiluPageSize: 10,
+    guanjianciPage: 1, //关键词
+    guanjianciPageSize: 10,
+    yonghushenhePage: 1, //用户审核列表
+    yonghushenhePageSize: 10,
+    gongyingshangPage: 1, //供应商列表
+    gongyingshangPageSize: 10,
+    shouyePage: 1, //首页列表
+    shouyePageSize: 10,
   },
   mutations: {
     havaMessage(state, str) {
@@ -283,6 +291,30 @@ export default new Vuex.Store({
     },
     pingtuanjiluPageSize(state, str) {
       state.pingtuanjiluPageSize = str;
+    },
+    guanjianciPage(state, str) {
+      state.guanjianciPage = str;
+    },
+    guanjianciPageSize(state, str) {
+      state.guanjianciPageSize = str;
+    },
+    yonghushenhePage(state, str) {
+      state.yonghushenhePage = str;
+    },
+    yonghushenhePageSize(state, str) {
+      state.yonghushenhePageSize = str;
+    },
+    gongyingshangPage(state, str) {
+      state.gongyingshangPage = str;
+    },
+    gongyingshangPageSize(state, str) {
+      state.gongyingshangPageSize = str;
+    },
+    shouyePage(state, str) {
+      state.shouyePage = str;
+    },
+    shouyePageSize(state, str) {
+      state.shouyePageSize = str;
     },
   },
   actions: {

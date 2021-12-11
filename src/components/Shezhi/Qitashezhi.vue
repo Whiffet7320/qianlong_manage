@@ -16,15 +16,29 @@
             </el-col>
           </el-row>
         </el-form>
-      </div> -->
+      </div>-->
       <!-- <div class="tit1">
         <el-button @click="addWenzhang" size="small" type="primary" icon="el-icon-plus">添加文章</el-button>
-      </div> -->
+      </div>-->
       <div class="myTable">
         <vxe-table :data="tableData">
           <vxe-table-column field="id" title="ID"></vxe-table-column>
           <vxe-table-column field="key" title="名称"></vxe-table-column>
-          <vxe-table-column field="value" title="内容"></vxe-table-column>
+          <vxe-table-column field="value" title="内容">
+            <template slot-scope="scope">
+              <div v-if="scope.row.mytype == 'arr'">
+                <el-image
+                  v-for="(item,i) in scope.row.value"
+                  :key="i"
+                  :src="item"
+                  fit="fill"
+                  style="width: 40px; height: 40px"
+                ></el-image>
+              </div>
+              <div v-else style="font-size:12px">{{scope.row.value}}</div>
+            </template>
+          </vxe-table-column>
+          <!-- <vxe-table-column field="value" title="内容"></vxe-table-column> -->
           <vxe-table-column field="desc" title="描述"></vxe-table-column>
           <vxe-table-column field="created_at" title="发布时间"></vxe-table-column>
           <vxe-table-column title="操作状态" width="160">
@@ -52,16 +66,11 @@
     <el-dialog
       title="编辑设置"
       :visible.sync="addDialogVisible"
-      width="400px"
+      width="700px"
       :before-close="addHandleClose"
     >
       <div class="myAddForm">
-        <el-form
-          :model="lhForm"
-          ref="lhForm"
-          label-width="60px"
-          class="demo-addForm"
-        >
+        <el-form :model="lhForm" ref="lhForm" label-width="60px" class="demo-addForm">
           <el-row>
             <el-col :span="20">
               <el-form-item label="设置名称：">
@@ -76,7 +85,28 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row v-if="lhForm.mytype == 'arr'">
+            <el-col :span="20">
+              <el-form-item label="轮播图：">
+                <div
+                  @click="companyList('llt', i)"
+                  class="myImg"
+                  v-for="(item, i) in lhForm.gallery_images"
+                  :key="i"
+                >
+                  <el-image :src="item" fit="fill" style="width: 70px; height: 70px">
+                    <div slot="error" class="image-slot">
+                      <i class="el-icon-picture-outline"></i>
+                    </div>
+                  </el-image>
+                  <div @click.stop="delImg('llt', i)" class="closeBtn">
+                    <el-button circle>×</el-button>
+                  </div>
+                </div>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row v-else>
             <el-col :span="20">
               <el-form-item label="设置值：">
                 <el-input size="small" placeholder="请输入设置值" v-model="lhForm.value"></el-input>
@@ -93,6 +123,15 @@
         </el-form>
       </div>
     </el-dialog>
+    <input
+      type="file"
+      name="companyLogo"
+      id="file0"
+      class="displayN"
+      multiple="multiple"
+      @change="companyLogo($event)"
+      ref="fileInputList"
+    />
   </div>
 </template>
 
@@ -114,15 +153,17 @@ export default {
   },
   data() {
     return {
-      addDialogVisible:false,
+      addDialogVisible: false,
       editor: null,
       tableData: [],
       total: 0,
       lhDialogVisible: false,
+      imgIndex: 0,
       lhForm: {
         key: "",
         value: "",
-        desc:"",
+        desc: "",
+        gallery_images: [""]
       },
       imgFile: null,
       isAdd: true
@@ -138,26 +179,44 @@ export default {
         page: this.qitashezhiliebiaoPage
       });
       this.tableData = res.data.data;
+      this.tableData.forEach(ele => {
+        if (ele.value[0] == "[") {
+          ele.mytype = "arr";
+          console.log(JSON.parse(ele.value));
+          ele.value = JSON.parse(ele.value);
+        }
+      });
       this.total = res.data.total;
     },
     addHandleClose() {
       this.addDialogVisible = false;
     },
-    async AddOnSubmit(){
-      const res = await this.$api.upDateGlobalConfigs({
-        value:this.lhForm.value
-      },this.id)
-      console.log(res)
+    async AddOnSubmit() {
+      console.log( this.lhForm.mytype,this.lhForm.value)
+      if(this.lhForm.mytype == 'arr'){
+        this.lhForm.gallery_images.forEach((ele,i)=>{
+          if(ele == ''){
+            this.lhForm.gallery_images.splice(i,1)
+          }
+        })
+      }
+      const res = await this.$api.upDateGlobalConfigs(
+        {
+          value: this.lhForm.mytype == 'arr' ? this.lhForm.gallery_images : this.lhForm.value
+        },
+        this.id
+      );
+      console.log(res);
       if (res) {
-          this.$message({
-            message: '修改成功',
-            type: "success"
-          });
-          this.getData();
-          this.addDialogVisible = false;
-        } else {
-          this.$message.error(res.msg);
-        }
+        this.$message({
+          message: "修改成功",
+          type: "success"
+        });
+        this.getData();
+        this.addDialogVisible = false;
+      } else {
+        this.$message.error(res.msg);
+      }
     },
     async submitForm() {
       // 添加
@@ -195,11 +254,93 @@ export default {
         }
       }
     },
+    // 上传图片
+    companyList(val, i = 0) {
+      this.imgIndex = i;
+      this.imgStatus = val;
+      this.$refs.fileInputList.click();
+    },
+    // 删除图片
+    delImg(val, i = 0) {
+      console.log(i);
+      if (val == "llt") {
+        if(this.lhForm.gallery_images.length != 1){
+          this.lhForm.gallery_images.splice(i,1)
+        }else{
+          this.$set(this.lhForm.gallery_images, i, "");
+        }
+      }
+      ``;
+    },
+    companyLogo(event) {
+      var file = event.target.files[0];
+      this.imgFile = file;
+      this.uploading(true);
+      this.$refs.fileInputList.value = "";
+    },
+    //将文件转为blob类型
+    readFileAsBuffer(file) {
+      const reader = new FileReader();
+      return new Promise(resolve => {
+        reader.readAsDataURL(file);
+        reader.onload = function() {
+          const base64File = reader.result.replace(
+            /^data:\w+\/\w+;base64,/,
+            ""
+          );
+          resolve(new window.OSS.Buffer(base64File, "base64"));
+        };
+      });
+    },
+    async uploading(flag) {
+      // console.log(document.getElementById("file0").value);
+      if (flag) {
+        var file_re = await this.readFileAsBuffer(this.imgFile);
+        const res = await this.$api.uploadToken();
+        let myData = res.data;
+        console.log(myData);
+        let client = new window.OSS.Wrapper({
+          region: myData.region, //oss地址
+          accessKeyId: myData.accessKeyId, //ak
+          accessKeySecret: myData.accessKeySecret, //secret
+          stsToken: myData.stsToken,
+          bucket: myData.bucket //oss名字
+        });
+        var imgtype = this.imgFile.type.substr(6, 4);
+        var store = `${new Date().getTime()}.${imgtype}`;
+        client.put(store, file_re).then(() => {
+          //这个结果就是url
+          console.log(store);
+          // var oss_imgurl = client.signatureUrl(store);
+          var oss_imgurl = `https://${myData.bucket}.${myData.url}/${store}`;
+          if (this.imgStatus == "llt") {
+            this.$set(this.lhForm.gallery_images, this.imgIndex, oss_imgurl);
+            if (
+              !this.lhForm.gallery_images[this.imgIndex + 1] &&
+              this.lhForm.gallery_images.length != 6
+            ) {
+              this.$set(this.lhForm.gallery_images, this.imgIndex + 1, "");
+              this.imgArrNum = this.lhForm.gallery_images.length - 1;
+            } else {
+              this.imgArrNum = 6;
+            }
+          }
+          console.log(oss_imgurl);
+        });
+      }
+    },
     // 编辑
     tabEdit(row) {
       this.id = row.id;
       this.lhForm.key = row.key;
-      this.lhForm.value = row.value;
+      this.lhForm.mytype = row.mytype;
+      console.log(row);
+      if (typeof row.value == "object") {
+        this.lhForm.gallery_images = row.value;
+        this.lhForm.gallery_images.push('')
+      } else {
+        this.lhForm.value = row.value;
+      }
       this.addDialogVisible = true;
     },
     // 删除
@@ -225,8 +366,8 @@ export default {
       };
       this.isAdd = true;
       // this.lhDialogVisible = true;
-      this.$store.commit('wenzhangObj',null);
-      this.$router.push({name:'Tianjiawenzhang'})
+      this.$store.commit("wenzhangObj", null);
+      this.$router.push({ name: "Tianjiawenzhang" });
     },
     lhHandleClose() {
       this.lhDialogVisible = false;
@@ -406,6 +547,44 @@ export default {
   }
   /deep/ .el-button {
     width: 100%;
+  }
+}
+.displayN {
+  display: none;
+}
+.myImg {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  display: inline-block;
+  margin-right: 12px;
+  .closeBtn {
+    position: absolute;
+    top: -6px;
+    right: -4px;
+    width: 20px;
+    height: 20px;
+    .el-button {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  /deep/ .image-slot {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fafafa;
+    width: 68px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    .el-icon-picture-outline {
+      font-size: 20px;
+    }
   }
 }
 </style>

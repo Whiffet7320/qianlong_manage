@@ -10,6 +10,7 @@
           <el-tab-pane label="商品信息" name="1"></el-tab-pane>
           <el-tab-pane label="商品详情" name="2"></el-tab-pane>
           <!-- <el-tab-pane label="其他设置" name="3"></el-tab-pane> -->
+          <el-tab-pane label="适配车型" name="4"></el-tab-pane>
         </el-tabs>
         <!-- 商品信息 -->
         <template v-if="activeName == '1'">
@@ -21,6 +22,21 @@
               label-width="120px"
               class="demo-ruleForm"
             >
+              <el-row v-if="!shopObj">
+                <el-col :span="12">
+                  <el-form-item label="零件编码(oe)：" prop="oe">
+                    <div style="display:flex;align-items: center;">
+                      <el-input ref="oeinput" size="small" v-model="ruleForm.oe"></el-input>
+                      <el-button
+                        style="margin-left:10px;margin-top:2px"
+                        @click="chaxun"
+                        class="btn"
+                        size="small"
+                      >查询</el-button>
+                    </div>
+                  </el-form-item>
+                </el-col>
+              </el-row>
               <el-row>
                 <el-col :span="12">
                   <el-form-item label="商品名称：" prop="name">
@@ -136,13 +152,6 @@
                   </el-form-item>
                 </el-col>
               </el-row>-->
-              <el-row v-if="!shopObj">
-                <el-col :span="12">
-                  <el-form-item label="零件编码(oe)：" prop="oe">
-                    <el-input size="small" v-model="ruleForm.oe"></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
               <el-row>
                 <el-col :span="12">
                   <el-form-item label="重量(g)：" prop="weight">
@@ -436,6 +445,15 @@
             <el-button size="small" type="primary" @click="qtszOnSubmit">保存</el-button>
           </div>
         </div>
+        <!-- 适配车型 -->
+        <div v-if="activeName == '4'">
+          <div class="myTable">
+            <vxe-table show-overflow height="700" :data="tableData">
+              <vxe-table-column field="vehicleId" title="车型号"></vxe-table-column>
+              <vxe-table-column field="vehicleName" title="配置"></vxe-table-column>
+            </vxe-table>
+          </div>
+        </div>
       </div>
     </div>
     <input
@@ -482,6 +500,7 @@ export default {
   },
   data() {
     return {
+      tableData: [],
       activeNameTab: "",
       content: "",
       ddsz: false,
@@ -535,7 +554,7 @@ export default {
         textarea: [{ required: true, message: "请输入简介", trigger: "blur" }],
         weight: [{ required: true, message: "请输入重量", trigger: "blur" }],
         stock: [{ required: true, message: "请输入库存", trigger: "blur" }],
-        oe: [{ required: true, message: "请输入零件编码", trigger: "blur" }],
+        oe: [{ required: true, message: "请输入零件编码", trigger: "blur" }]
       },
       addInp: "",
       // 是否添加规格（渲染按钮还是输入框）
@@ -618,6 +637,17 @@ export default {
         this.$set(this.skuTableData, 0, this.ruleForm.parameter);
       }
       console.log(this.ruleForm, this.skuTableData);
+    },
+    async chaxun() {
+      const res = await this.$api.itemsSearch_oe({
+        oe: this.ruleForm.oe
+      });
+      console.log(res);
+      if (res) {
+        this.ruleForm.name = res.data.partList.oeName;
+        this.ruleForm.desc = res.data.partList.remark;
+        this.tableData = res.data.vehicleList;
+      }
     },
     // 保存
     async onSubmitForm(formName) {
@@ -1072,11 +1102,48 @@ export default {
     if (this.shopObj) {
       this.editor.txt.html(this.shopObj.detail_intro);
     }
+    this.$nextTick(() => {
+      this.$refs.oeinput.focus();
+    });
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.myTable {
+  margin-top: 10px;
+  .xiala {
+    padding: 10px 20px;
+    .item {
+      font-size: 12px;
+    }
+  }
+  .flex {
+    display: flex;
+    align-items: center;
+  }
+  .fenye {
+    margin-top: 10px;
+  }
+  /deep/ .vxe-table--render-default .vxe-body--column {
+    line-height: 14px;
+    vertical-align: middle;
+  }
+  /deep/ .vxe-cell--label {
+    font-size: 12px;
+  }
+  /deep/ .vxe-cell--title {
+    font-size: 12px;
+  }
+  /deep/ .image-slot {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #ddd;
+    line-height: 38px;
+    text-align: center;
+    border-radius: 4px;
+  }
+}
 .index {
 }
 .nav1 {

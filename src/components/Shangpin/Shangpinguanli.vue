@@ -7,21 +7,23 @@
           <el-tab-pane label="如商城商品" name="1"></el-tab-pane>
           <el-tab-pane label="服务商品" name="2"></el-tab-pane>
         </el-tabs>
-      </div> -->
+      </div>-->
     </div>
     <div class="nav2">
       <div class="myForm">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="商品分类：">
-            <el-select size="small" v-model="formInline.category_id" placeholder="请选择">
+            <!-- <el-select size="small" v-model="formInline.category_id" placeholder="请选择">
               <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"></el-option>
-            </el-select>
+            </el-select> -->
+            <el-cascader size="small" v-model="formInline.category_id" :options="options" clearable></el-cascader>
           </el-form-item>
           <el-form-item label="商品搜索：">
             <el-input size="small" v-model="formInline.name" placeholder="商品搜索"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button size="small" type="primary" @click="onSubmit">查询</el-button>
+            <el-button size="small" @click="onReact">重置</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -162,12 +164,24 @@ export default {
     async getData() {
       const res2 = await this.$api.categories();
       console.log(res2);
+      res2.data.forEach(ele => {
+        ele.value = ele.id;
+        ele.label = ele.name;
+        if (ele.children) {
+          ele.children.forEach(item => {
+            item.value = item.id;
+            item.label = item.name;
+          });
+        }
+      });
       this.options = res2.data;
 
       this.activeName = this.tabIndex;
       const res = await this.$api.items({
         limit: this.shangpingliebiaoPageSize,
-        page: this.shangpingliebiaoPage
+        page: this.shangpingliebiaoPage,
+        cate_id: this.formInline.category_id[1],
+        keyword: this.formInline.name
       });
       console.log(res);
       this.total = res.data.total;
@@ -184,15 +198,15 @@ export default {
             const aa = ele2.children.filter(ele3 => {
               return ele3.id == ele.category_id;
             });
-            if(aa.length>0){
+            if (aa.length > 0) {
               ele.myCategory = aa[0].name;
               return aa;
             }
-          }else{
+          } else {
             return ele2.id == ele.category_id;
           }
         });
-        ele.myCategory = `${bb[0].name}/${ele.myCategory}`
+        ele.myCategory = `${bb[0].name}/${ele.myCategory}`;
       });
     },
     // 开关（上架/下架）
@@ -222,7 +236,7 @@ export default {
       const res = await this.$api.deleteItems(row.id);
       if (res) {
         this.$message({
-          message: '删除成功',
+          message: "删除成功",
           type: "success"
         });
         this.getData();
@@ -235,7 +249,12 @@ export default {
       this.formInline.name = "";
     },
     onSubmit() {
-      console.log("submit!");
+      console.log(this.formInline);
+      this.getData();
+    },
+    onReact() {
+      this.formInline.category_id = "";
+      this.formInline.name = "";
       this.getData();
     },
     toAddShop() {

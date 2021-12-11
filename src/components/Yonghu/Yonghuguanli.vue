@@ -21,17 +21,17 @@
                 v-model="formInline.search"
                 class="input-with-select"
               >
-                <el-select
+                <!-- <el-select
                   class="left-select"
                   v-model="formInline.select"
                   slot="prepend"
                   placeholder="请选择"
                 >
-                  <!-- <el-option label="全部" value="1"></el-option> -->
+                  <el-option label="全部" value="1"></el-option>
                   <el-option label="UID" value="2"></el-option>
                   <el-option label="手机号" value="3"></el-option>
                   <el-option label="用户名称" value="4"></el-option>
-                </el-select>
+                </el-select>-->
               </el-input>
             </div>
           </el-form-item>
@@ -136,13 +136,13 @@
           <!-- <vxe-table-column field="user_info.shop_name" title="店铺名称"></vxe-table-column> -->
           <!-- <vxe-table-column field="user_info.shop_phone" title="店铺联系方式"></vxe-table-column> -->
           <vxe-table-column field="score" title="积分"></vxe-table-column>
-          <!-- <vxe-table-column title="操作状态" width="150">
+          <vxe-table-column title="操作状态" width="150">
             <template slot-scope="scope">
               <div class="flex">
-                <el-button size="small" @click="seeMingxi(scope.row)" type="text">查看明细</el-button>
+                <el-button size="small" type="text" @click="tabEdit(scope.row)">编辑</el-button>
               </div>
             </template>
-          </vxe-table-column> -->
+          </vxe-table-column>
         </vxe-table>
         <el-pagination
           class="fenye"
@@ -198,30 +198,130 @@
     <!-- 编辑 -->
     <el-dialog
       title="编辑"
-      :visible.sync="editDialogVisible"
-      width="30%"
-      :before-close="editHandleClose"
+      :visible.sync="addDialogVisible"
+      width="700px"
+      :before-close="addHandleClose"
     >
-      <div class="editForm">
-        <el-form :model="editForm" ref="editForm" label-width="140px" class="demo-ruleForm">
-          <el-form-item label="用户等级：">
-            <el-input size="small" v-model="editForm.level"></el-input>
-          </el-form-item>
-          <el-form-item label="用户密码：">
-            <el-input size="small" v-model="editForm.pwd"></el-input>
-          </el-form-item>
-          <el-form-item label="用户自身的邀请码：">
-            <el-input size="small" v-model="editForm.uniqid"></el-input>
-          </el-form-item>
-          <el-form-item label="邀请人ID：">
-            <el-input size="small" v-model="editForm.spread_uid"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button size="small" type="primary" @click="submitForm">确定</el-button>
-          </el-form-item>
+      <div class="myAddForm">
+        <el-form :model="addForm" ref="addForm" label-width="100px" class="demo-addForm">
+          <el-row>
+            <el-col :span="20">
+              <el-form-item label="企业图标/头像">
+                <div @click="companyList('tx')" class="myImg">
+                  <el-image
+                    :src="addForm.user_info.avatar"
+                    fit="fill"
+                    style="width: 60px; height: 60px"
+                  >
+                    <div slot="error" class="image-slot">
+                      <i class="el-icon-picture-outline"></i>
+                    </div>
+                  </el-image>
+                  <div @click.stop="delImg('tx')" class="closeBtn">
+                    <el-button circle>×</el-button>
+                  </div>
+                </div>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="20">
+              <el-form-item label="企业营业执照">
+                <div @click="companyList('yyzz')" class="myImg">
+                  <el-image
+                    :src="addForm.user_info.business_license"
+                    fit="fill"
+                    style="width: 60px; height: 60px"
+                  >
+                    <div slot="error" class="image-slot">
+                      <i class="el-icon-picture-outline"></i>
+                    </div>
+                  </el-image>
+                  <div @click.stop="delImg('yyzz')" class="closeBtn">
+                    <el-button circle>×</el-button>
+                  </div>
+                </div>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="20">
+              <el-form-item label="企业名称">
+                <el-input size="small" v-model="addForm.user_info.nick_name"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="20">
+              <el-form-item label="店铺图">
+                <div @click="companyList('dpt')" class="myImg">
+                  <el-image
+                    :src="addForm.user_info.shop_img"
+                    fit="fill"
+                    style="width: 60px; height: 60px"
+                  >
+                    <div slot="error" class="image-slot">
+                      <i class="el-icon-picture-outline"></i>
+                    </div>
+                  </el-image>
+                  <div @click.stop="delImg('dpt')" class="closeBtn">
+                    <el-button circle>×</el-button>
+                  </div>
+                </div>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="20">
+              <el-form-item label="店铺名称">
+                <el-input size="small" v-model="addForm.user_info.shop_name"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="20">
+              <el-form-item label="店铺地址">
+                <el-input size="small" v-model="addForm.user_info.detail_address"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="20">
+              <el-form-item label="店铺联系方式">
+                <el-input size="small" v-model="addForm.user_info.shop_phone"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="20">
+              <el-form-item label="企业类型">
+                <el-radio-group v-model="addForm.user_info.type">
+                  <el-radio :label="0">企业</el-radio>
+                  <el-radio :label="1">个体工商户</el-radio>
+                  <el-radio :label="2">小微</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="20">
+              <el-form-item>
+                <el-button size="small" type="primary" @click="AddOnSubmit">提交</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
       </div>
     </el-dialog>
+    <input
+      type="file"
+      name="companyLogo"
+      id="file0"
+      class="displayN"
+      multiple="multiple"
+      @change="companyLogo($event)"
+      ref="fileInputList"
+    />
   </div>
 </template>
 
@@ -256,6 +356,15 @@ export default {
   },
   data() {
     return {
+      imgStatus: "",
+      addDialogVisible: false,
+      addForm: {
+        id: "",
+        name: "",
+        sort: "",
+        type: "",
+        user_info: {}
+      },
       activeName: "1",
       formInline: {
         search: "",
@@ -288,7 +397,8 @@ export default {
     async getData() {
       const res = await this.$api.users({
         limit: this.yonghuguanliPageSize,
-        page: this.yonghuguanliPage
+        page: this.yonghuguanliPage,
+        keyword: this.formInline.search
       });
       console.log(res.data);
       this.total = res.data.total;
@@ -301,10 +411,122 @@ export default {
               : ele.user_info.type == 1
               ? "个体工商户"
               : "小微";
-          ele.myUser_infoStatus = ele.user_info.status == 0 ? '审核中' : ele.user_info.status == 1 ? '审核通过' : '审核未通过'; 
+          ele.myUser_infoStatus =
+            ele.user_info.status == 0
+              ? "审核中"
+              : ele.user_info.status == 1
+              ? "审核通过"
+              : "审核未通过";
         }
       });
       console.log(this.tableData);
+    },
+    addHandleClose() {
+      this.addDialogVisible = false;
+    },
+    // 删除图片
+    delImg(val, i = 0) {
+      console.log(i);
+      if (val == "tx") {
+        this.$set(this.addForm.user_info, "avatar", "");
+      } else if (val == "zt") {
+        this.$set(this.addForm.user_info, "business_license", "");
+      } else if (val == "llt") {
+        this.$set(this.addForm.user_info, "shop_img", "");
+      }
+      ``;
+    },
+    async AddOnSubmit() {
+      console.log(this.addForm);
+      const res = await this.$api.updateUsers(
+        {
+          avatar: this.addForm.user_info.avatar,
+          business_license: this.addForm.user_info.business_license,
+          nick_name: this.addForm.user_info.nick_name,
+          shop_img: this.addForm.user_info.shop_img,
+          shop_name: this.addForm.user_info.shop_name,
+          detail_address: this.addForm.user_info.detail_address,
+          shop_phone: this.addForm.user_info.shop_phone,
+          type: this.addForm.user_info.type
+        },
+        this.id
+      );
+      console.log(res)
+      if (res) {
+          this.$message({
+            message: "修改成功",
+            type: "success"
+          });
+          this.getData()
+          this.addDialogVisible = false;
+        } else {
+          this.$message.error(res.msg);
+          this.getData();
+        }
+    },
+    // 上传图片
+    companyList(val) {
+      this.imgStatus = val;
+      this.$refs.fileInputList.click();
+    },
+    async companyLogo(event) {
+      var file = event.target.files[0];
+      this.imgFile = file;
+      this.uploading(true);
+      this.$refs.fileInputList.value = "";
+    },
+    //将文件转为blob类型
+    readFileAsBuffer(file) {
+      const reader = new FileReader();
+      return new Promise(resolve => {
+        reader.readAsDataURL(file);
+        reader.onload = function() {
+          const base64File = reader.result.replace(
+            /^data:\w+\/\w+;base64,/,
+            ""
+          );
+          resolve(new window.OSS.Buffer(base64File, "base64"));
+        };
+      });
+    },
+    async uploading(flag) {
+      // console.log(document.getElementById("file0").value);
+      if (flag) {
+        var file_re = await this.readFileAsBuffer(this.imgFile);
+        const res = await this.$api.uploadToken();
+        let myData = res.data;
+        console.log(myData);
+        let client = new window.OSS.Wrapper({
+          region: myData.region, //oss地址
+          accessKeyId: myData.accessKeyId, //ak
+          accessKeySecret: myData.accessKeySecret, //secret
+          stsToken: myData.stsToken,
+          bucket: myData.bucket //oss名字
+        });
+        var imgtype = this.imgFile.type.substr(6, 4);
+        var store = `${new Date().getTime()}.${imgtype}`;
+        client.put(store, file_re).then(() => {
+          //这个结果就是url
+          console.log(store);
+          // var oss_imgurl = client.signatureUrl(store);
+          var oss_imgurl = `https://${myData.bucket}.${myData.url}/${store}`;
+          if (this.imgStatus == "tx") {
+            this.$set(this.addForm.user_info, "avatar", oss_imgurl);
+          } else if (this.imgStatus == "yyzz") {
+            this.addForm.user_info.business_license = oss_imgurl;
+          } else if (this.imgStatus == "dpt") {
+            this.addForm.user_info.shop_img = oss_imgurl;
+          }
+          console.log(oss_imgurl);
+        });
+      }
+    },
+    tabEdit(row) {
+      console.log(row);
+      this.id = row.id;
+      row.is_show = row.status == "0" ? "隐藏" : "显示";
+      this.addForm = { ...row };
+      this.addDialogVisible = true;
     },
     async getMingxiData() {
       const res = await this.$api.usersIdMoneyRecords({
@@ -457,7 +679,7 @@ export default {
       vertical-align: text-top;
     }
     .search {
-      margin-top: 5px;
+      // margin-top: 5px;
       /deep/ .el-select {
         width: 100px;
       }
@@ -562,5 +784,61 @@ export default {
       width: 100px;
     }
   }
+}
+.myAddForm {
+  /deep/ .el-select {
+    width: 100%;
+  }
+  /deep/ .el-form-item__label {
+    font-size: 12px;
+    width: 130px !important;
+  }
+  /deep/ .el-form-item__content {
+    margin-left: 130px !important;
+  }
+  /deep/ .el-radio__label {
+    font-size: 12px;
+  }
+  /deep/ .el-button {
+    width: 100%;
+  }
+  .myImg {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: inline-block;
+    margin-right: 12px;
+    .closeBtn {
+      position: absolute;
+      top: -6px;
+      right: -4px;
+      width: 20px;
+      height: 20px;
+      .el-button {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    /deep/ .image-slot {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #fafafa;
+      width: 58px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      .el-icon-picture-outline {
+        font-size: 20px;
+      }
+    }
+  }
+}
+.displayN {
+  display: none;
 }
 </style>

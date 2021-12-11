@@ -14,6 +14,17 @@ export default {
     chatRooms:'/admin/chat-rooms',//聊天列表
     chatHistory:'/admin/chat-history',//聊天历史记录
     afterSale:'/admin/after-sale',//售后单列表
+    scoreRule:'/admin/score-rule',//积分规则修改
+    billRule:'/admin/bill-rule',//发票规则修改
+    afterSaleStatus:'/admin/after-sale/status',//售后单更改状态列表
+    search_itemkeyslist:'/admin/search_itemkeyslist',//搜索关键字列表
+    search_itemkeys:'/admin/search_itemkeys',//更新关键字名称
+    userexamineList:'/admin/userexamine-list',//后台用户审核列表
+    userexamine:'/admin/userexamine',//审核操作
+    supplier:'/admin/supplier',//供应商列表
+    supplierIdOelist:'/admin/supplier',//供应商oe码列表
+    statistics:'/admin/statistics',//统计
+    itemsSearch_oe:'/admin/items/search_oe',//商品添加--oe码查询
 
     usersIdMoneyRecords: '/admin/users', //用户积分列表
     addCategories: '/admin/categories', //新增分类
