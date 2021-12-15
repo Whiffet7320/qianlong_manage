@@ -31,7 +31,7 @@
         <el-button @click="toAddShop" size="small" type="primary" icon="el-icon-plus">添加商品</el-button>
       </div>
       <div class="myTable">
-        <vxe-table :data="tableData">
+        <vxe-table height='700' :loading="loading" :data="tableData">
           <vxe-table-column type="expand" width="30" :fixed="null">
             <template #content="{ row }">
               <template>
@@ -95,7 +95,7 @@
               <el-switch @change="changeKG(scope.row)" v-model="scope.row.myStatus"></el-switch>
             </template>
           </vxe-table-column>
-          <vxe-table-column title="操作状态" width="180">
+          <vxe-table-column title="操作状态" width="140">
             <template slot-scope="scope">
               <div class="flex">
                 <el-button size="small" @click="toEditShop(scope.row)" type="text">编辑</el-button>
@@ -147,6 +147,7 @@ export default {
   },
   data() {
     return {
+      loading:false,
       activeName: "1",
       formInline: {
         category_id: "",
@@ -162,6 +163,7 @@ export default {
   },
   methods: {
     async getData() {
+      this.loading = true;
       const res2 = await this.$api.categories();
       console.log(res2);
       res2.data.forEach(ele => {
@@ -208,6 +210,7 @@ export default {
         });
         ele.myCategory = `${bb[0].name}/${ele.myCategory}`;
       });
+      this.loading = false;
     },
     // 开关（上架/下架）
     async changeKG(row) {

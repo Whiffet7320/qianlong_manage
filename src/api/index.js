@@ -464,7 +464,7 @@ export default {
             }
         })
     },
-    afterSaleStatus(id){
+    afterSaleStatus(id) {
         return myGet({
             url: `${urls.afterSaleStatus}/${id}`,
         })
@@ -556,7 +556,7 @@ export default {
             url: `${urls.supplier}/${id}`,
         })
     },
-    supplierIdOelist(obj,id) {
+    supplierIdOelist(obj, id) {
         return myGet({
             url: `${urls.supplierIdOelist}/${id}/oelist`,
             params: {
@@ -564,7 +564,7 @@ export default {
             }
         })
     },
-    addSupplierIdOelist(obj,id) {
+    addSupplierIdOelist(obj, id) {
         return myPost({
             url: `${urls.supplierIdOelist}/${id}/addoe`,
             data: {
@@ -580,7 +580,7 @@ export default {
             }
         })
     },
-    deleteSupplierIdOelist(obj,id) {
+    deleteSupplierIdOelist(obj, id) {
         return myGet({
             url: `${urls.supplierIdOelist}/${id}/deloe`,
             params: {
@@ -591,7 +591,7 @@ export default {
     statistics(obj) {
         return myGet({
             url: urls.statistics,
-            params:{
+            params: {
                 ...obj
             }
         })
@@ -617,10 +617,31 @@ export default {
             }
         })
     },
+    manage_limit() {
+        return myGet({
+            url: urls.manage_limit,
+        })
+    },
+    manage_list(obj) {
+        return myGet({
+            url: urls.manage_list,
+            params: {
+                ...obj
+            }
+        })
+    },
+    manage_add(obj) {
+        return myPost({
+            url: urls.manage_add,
+            data: {
+                ...obj
+            }
+        })
+    },
     itemsSearch_oe(obj) {
         return myPost({
             url: urls.itemsSearch_oe,
-            data:{
+            data: {
                 ...obj
             }
         })
@@ -665,6 +686,32 @@ export default {
         return myPut({
             url: `${urls.orders}/${id}/delivery`,
             data: {
+                ...obj
+            }
+        })
+    },
+    manage_limitview(obj) {
+        return myPost({
+            url: urls.manage_limitview,
+            data: {
+                ...obj
+            }
+        })
+    },
+    manage_del(id) {
+        return myPost({
+            url: `${urls.manage_del}/${id}`,
+        })
+    },
+    manage_viewId(id) {
+        return myGet({
+            url: `${urls.manage_view}/${id}`,
+        })
+    },
+    manage_update(obj,id) {
+        return myPost({
+            url: `${urls.manage_update}/${id}`,
+            data:{
                 ...obj
             }
         })

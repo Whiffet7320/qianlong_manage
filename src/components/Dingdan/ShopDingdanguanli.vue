@@ -53,7 +53,7 @@
         </el-form>
       </div>
       <div class="myTable">
-        <vxe-table :data="tableData">
+        <vxe-table :loading="loading" :data="tableData">
           <vxe-table-column min-width="40" field="myType" title="类型"></vxe-table-column>
           <vxe-table-column min-width="40" field="myStatus" title="状态"></vxe-table-column>
           <vxe-table-column field="address.name" title="用户信息"></vxe-table-column>
@@ -159,6 +159,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       myFahuoOption: [],
       activeName: "3",
       form: {
@@ -191,6 +192,7 @@ export default {
   },
   methods: {
     async getData() {
+      this.loading = true;
       const res = await this.$api.afterSale({
         page: this.ShopdingdanliebiaoPage,
         limit: this.ShopdingdanliebiaoPageSize,
@@ -218,6 +220,7 @@ export default {
         ele.myType =
           ele.type == 0 ? "仅退款" : ele.type == 1 ? "退货退款" : "换货";
       });
+      this.loading = false;
     },
     changeRad1() {
       this.getData();

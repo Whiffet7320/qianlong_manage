@@ -522,7 +522,8 @@ export default {
         gallery_images: [""],
         status: "",
         type: "",
-        sort: ""
+        sort: "",
+        stock:0,
       },
       rules: {
         sort: [{ required: true, message: "请输入排序", trigger: "blur" }],
@@ -644,6 +645,7 @@ export default {
       });
       console.log(res);
       if (res) {
+        this.ruleForm.stock ++;
         this.ruleForm.name = res.data.partList.oeName;
         this.ruleForm.desc = res.data.partList.remark;
         this.tableData = res.data.vehicleList;

@@ -99,7 +99,7 @@
         </el-form>
       </div>
       <div class="myTable">
-        <vxe-table :data="tableData">
+        <vxe-table :loading="loading" :data="tableData">
           <vxe-table-column type="expand" width="30" :fixed="null">
             <template #content="{ row }">
               <template>
@@ -241,6 +241,7 @@ export default {
   },
   data() {
     return {
+      loading:false,
       activeName: "3",
       form: {
         rad1: "-2",
@@ -272,6 +273,7 @@ export default {
   },
   methods: {
     async getData() {
+      this.loading = true;
       const res = await this.$api.orders({
         page: this.dingdanliebiaoPage,
         limit: this.dingdanliebiaoPageSize,
@@ -296,6 +298,7 @@ export default {
             ? "已发货"
             : "已完成";
       });
+      this.loading = false;
     },
     changRad1(e){
       console.log(e)

@@ -7,7 +7,7 @@
           <el-tab-pane label="如商城商品分类" name="1"></el-tab-pane>
           <el-tab-pane label="服务商品分类" name="2"></el-tab-pane>
         </el-tabs>
-      </div> -->
+      </div>-->
     </div>
     <div class="nav2">
       <!-- <div class="myForm">
@@ -45,6 +45,8 @@
       </div>
       <div class="myTable">
         <vxe-table
+          height="700"
+          :loading="loading"
           :tree-config="{
             children: 'children',
           }"
@@ -101,11 +103,7 @@
           <el-row>
             <el-col :span="20">
               <el-form-item label="父级">
-                <el-select
-                  size="small"
-                  v-model="addForm.pid"
-                  placeholder="请选择"
-                >
+                <el-select size="small" v-model="addForm.pid" placeholder="请选择">
                   <el-option label="顶级分类" value="0"></el-option>
                   <el-option
                     v-for="item in tableData"
@@ -180,7 +178,7 @@
                 </el-radio-group>
               </el-form-item>
             </el-col>
-          </el-row> -->
+          </el-row>-->
           <el-row>
             <el-col :span="12">
               <el-form-item label="状态">
@@ -228,6 +226,7 @@ export default {
   },
   data() {
     return {
+      loading:false,
       activeName: "1",
       searchForm: {
         pid: "",
@@ -256,6 +255,7 @@ export default {
   },
   methods: {
     async getData() {
+      this.loading = true;
       this.activeName = this.tabShopIndex;
       const res = await this.$api.categories({
         type: this.activeName == "1" ? "1" : "0"
@@ -270,6 +270,7 @@ export default {
           });
         }
       });
+      this.loading = false;
     },
     // 开关（显示/隐藏）
     async changeKG(row) {
@@ -278,8 +279,7 @@ export default {
         {
           name: row.name,
           sort: row.sort,
-          status: row.is_showKG == true ? "1" : "0",
-
+          status: row.is_showKG == true ? "1" : "0"
         },
         row.id
       );
@@ -325,7 +325,7 @@ export default {
         });
         setTimeout(() => {
           this.getData();
-        }, 500);  
+        }, 500);
       } else {
         this.$message.error(res.msg);
       }
@@ -337,14 +337,14 @@ export default {
           if (this.addForm.id == "") {
             // 新增
             const res = await this.$api.addCategories({
-              parent_id:this.addForm.pid,
+              parent_id: this.addForm.pid,
               name: this.addForm.name,
               sort: this.addForm.sort,
-              status: this.addForm.is_show == "隐藏" ? "0" : "1",
+              status: this.addForm.is_show == "隐藏" ? "0" : "1"
             });
             if (res) {
               this.$message({
-                message: '',
+                message: "",
                 type: "success"
               });
               this.addDialogVisible = false;
@@ -357,13 +357,13 @@ export default {
                 name: this.addForm.name,
                 sort: this.addForm.sort,
                 status: this.addForm.is_show == "隐藏" ? "0" : "1",
-                type: this.addForm.type == "商城商品" ? "1" : "0",
+                type: this.addForm.type == "商城商品" ? "1" : "0"
               },
               this.addForm.id
             );
             if (res) {
               this.$message({
-                message: '',
+                message: "",
                 type: "success"
               });
               this.addDialogVisible = false;

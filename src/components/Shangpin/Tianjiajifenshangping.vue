@@ -30,7 +30,7 @@
               </el-row>
               <el-row>
                 <el-col :span="12">
-                  <el-form-item label="商品价格：" prop="price">
+                  <el-form-item label="商品积分：" prop="price">
                     <el-input size="small" v-model="ruleForm.price"></el-input>
                   </el-form-item>
                 </el-col>
@@ -513,7 +513,7 @@ export default {
           { required: true, message: "请上传商品浏览图", trigger: "change" }
         ],
         postage: [{ required: true, message: "请输入邮费", trigger: "blur" }],
-        price: [{ required: true, message: "请输入价格", trigger: "blur" }],
+        price: [{ required: true, message: "请输入所需积分", trigger: "blur" }],
         desc: [
           { required: true, message: "请填写活动形式", trigger: "blur" }
         ],

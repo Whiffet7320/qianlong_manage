@@ -191,6 +191,10 @@ const routes = [{
         name: 'Xiaoxiguanli',
         component: () => import('./components/Shezhi/Xiaoxiguanli'),
     },{
+        path: 'Zhanghaoguanli',
+        name: 'Zhanghaoguanli',
+        component: () => import('./components/Shezhi/Zhanghaoguanli'),
+    },{
         path: 'Guanjianci',
         name: 'Guanjianci',
         component: () => import('./components/Shezhi/Guanjianci'),

@@ -45,6 +45,8 @@ export default new Vuex.Store({
     dingdanliebiaoPageSize: 10,
     ShopdingdanliebiaoPage: 1, //商品订单列表
     ShopdingdanliebiaoPageSize: 10,
+    ZhanghaobiaoPage: 1, //账号管理列表
+    ZhanghaobiaoPageSize: 10,
     tabIndex:'1',
     tabShopIndex:'1',
     // 
@@ -199,6 +201,12 @@ export default new Vuex.Store({
     },
     ShopdingdanliebiaoPageSize(state, str) {
       state.ShopdingdanliebiaoPageSize = str;
+    },
+    ZhanghaobiaoPage(state, str) {
+      state.ZhanghaobiaoPage = str;
+    },
+    ZhanghaobiaoPageSize(state, str) {
+      state.ZhanghaobiaoPageSize = str;
     },
 
     // 

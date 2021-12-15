@@ -25,7 +25,7 @@
         <el-button @click="toAddShop" size="small" type="primary" icon="el-icon-plus">添加商品</el-button>
       </div>
       <div class="myTable">
-        <vxe-table :data="tableData">
+        <vxe-table height='700' :loading="loading" :data="tableData">
           <vxe-table-column type="expand" width="30" :fixed="null">
             <template #content="{ row }">
               <template>
@@ -141,6 +141,7 @@ export default {
   },
   data() {
     return {
+      loading:false,
       activeName: "1",
       formInline: {
         category_id: "",
@@ -156,6 +157,7 @@ export default {
   },
   methods: {
     async getData() {
+      this.loading = true;
       this.activeName = this.tabIndex;
       const res = await this.$api.scoreItems({
         limit: this.jifenshangpingliebiaoPageSize,
@@ -173,6 +175,7 @@ export default {
           }
         });
       });
+      this.loading = false;
     },
     // 开关（上架/下架）
     async changeKG(row) {

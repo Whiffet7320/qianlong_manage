@@ -1,4 +1,5 @@
 export default {
+    // 线上地址 http://car_admin.5laoye.com/ 账号和密码都是admin
     // 如师傅
     // baseUrl:'http://192.168.50.96:8001',
     baseUrl: 'https://dev.cars.hxqhhhh.shop/',
@@ -25,7 +26,11 @@ export default {
     supplierIdOelist:'/admin/supplier',//供应商oe码列表
     statistics:'/admin/statistics',//统计
     itemsSearch_oe:'/admin/items/search_oe',//商品添加--oe码查询
-
+    manage_limit:'/admin/manage_limit',//权限列表
+    manage_list:'/admin/manage_list',//账号列表
+    manage_add:'/admin/manage_add',//添加账号
+    manage_limitview:'/admin/manage_limitview',//获得权限名称
+    manage_view:'/admin/manage_view',//账号详情
     usersIdMoneyRecords: '/admin/users', //用户积分列表
     addCategories: '/admin/categories', //新增分类
     updateCategories: '/admin/categories', //修改分类
@@ -48,6 +53,8 @@ export default {
     turntableItem: '/admin/turntable-item', //奖品列表
     awards: '/admin/awards', //中奖列表
     goodsOrder: '/admin/goods-order', //商品订单列表
+    manage_update:'/admin/manage_update',//修改账号
+    manage_del:'/admin/manage_del',//删除账号
     // 模板
     productList: '/admin/product/list', //商品列表
     loginInfo: '/admin/login/info',

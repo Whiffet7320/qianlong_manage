@@ -18,8 +18,7 @@
         :clickEffect="true"
         clickMode="push"
         class="lizi"
-      >
-      </vue-particles>
+      ></vue-particles>
       <div class="loginBox">
         <div class="tit1">后台管理系统</div>
         <div class="tit2">欢迎你回来~</div>
@@ -69,7 +68,7 @@
                 <div class="wjmm">忘记密码</div>
                 <div class="zczh">注册账号</div>
               </div>
-            </el-form-item> -->
+            </el-form-item>-->
           </el-form>
           <el-button
             @click="onLogin"
@@ -135,8 +134,13 @@ export default {
         sessionStorage.setItem("isLogin", true);
         sessionStorage.setItem("userInfo", JSON.stringify(res.data.user));
         sessionStorage.setItem("userId", res.data.user.id);
+        sessionStorage.setItem(
+          "menu",
+          encodeURIComponent(JSON.stringify(res.data.user.menu))
+        );
+        sessionStorage.setItem("toShouye", 'yes');
         this.$message({
-          message: '登录成功',
+          message: "登录成功",
           type: "success"
         });
         setTimeout(() => {

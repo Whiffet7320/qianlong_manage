@@ -8,7 +8,7 @@
         <el-button @click="addPostage" size="small" type="primary" icon="el-icon-plus">添加运费模板</el-button>
       </div>
       <div class="myTable">
-        <vxe-table align="center" :data="tableData">
+        <vxe-table height='700' :loading="loading" align="center" :data="tableData">
           <vxe-table-column field="id" title="ID"></vxe-table-column>
           <vxe-table-column field="name" title="模板名称"></vxe-table-column>
           <vxe-table-column field="first_weight" title="首重"></vxe-table-column>
@@ -192,6 +192,7 @@ export default {
   },
   data() {
     return {
+      loading:false,
       isEditId :'',
       isEdit: false,
       cityData: [],
@@ -234,6 +235,7 @@ export default {
   },
   methods: {
     async getData() {
+      this.loading = true;
       const res = await this.$api.postage({
         limit: this.yunfeimubanliebiaoPageSize,
         page: this.yunfeimubanliebiaoPage
@@ -248,6 +250,7 @@ export default {
         parent_id: 0
       });
       this.cityData = res2.data;
+      this.loading = false;
     },
     // 编辑运费模板
     async tabEdit(row) {

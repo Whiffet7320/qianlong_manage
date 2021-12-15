@@ -20,8 +20,7 @@
                 placeholder="请输入内容"
                 v-model="formInline.search"
                 class="input-with-select"
-              >
-              </el-input>
+              ></el-input>
             </div>
           </el-form-item>
           <el-form-item>
@@ -40,7 +39,7 @@
         >-->
       </div>
       <div class="myTable">
-        <vxe-table :data="tableData">
+        <vxe-table height="700" :loading="loading" :data="tableData">
           <vxe-table-column type="expand" width="30" :fixed="null">
             <template #content="{ row }">
               <template>
@@ -234,6 +233,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       activeName: "1",
       formInline: {
         search: "",
@@ -264,10 +264,11 @@ export default {
   },
   methods: {
     async getData() {
+      this.loading = true;
       const res = await this.$api.userexamineList({
         limit: this.yonghushenhePageSize,
         page: this.yonghushenhePage,
-        keyword:this.formInline.search
+        keyword: this.formInline.search
       });
       console.log(res.data);
       this.total = res.data.total;
@@ -285,6 +286,7 @@ export default {
         }
       });
       console.log(this.tableData);
+      this.loading = false;
     },
     async getMingxiData() {
       const res = await this.$api.usersIdMoneyRecords({

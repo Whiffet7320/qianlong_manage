@@ -5,10 +5,10 @@
       <div class="tit2">
         <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">
-            admin<i class="el-icon-arrow-down el-icon--right"></i>
+            {{username}}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="1">个人中心</el-dropdown-item>
+            <!-- <el-dropdown-item command="1">个人中心</el-dropdown-item> -->
             <el-dropdown-item command="2">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -24,9 +24,14 @@ export default {
     ...mapState(["headerTit"]),
   },
   data() {
-    return {};
+    return {
+      username:'',
+    };
   },
-  created() {},
+  created() {
+    this.username = JSON.parse(sessionStorage.getItem('userInfo')).phone
+    console.log(this.username) 
+  },
   methods: {
     handleCommand(command) {
       if (command == "2") {

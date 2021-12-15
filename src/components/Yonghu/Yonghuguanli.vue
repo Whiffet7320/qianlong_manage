@@ -51,7 +51,7 @@
         >-->
       </div>
       <div class="myTable">
-        <vxe-table :data="tableData">
+        <vxe-table height='700' :loading="loading" :data="tableData">
           <vxe-table-column type="expand" width="30" :fixed="null">
             <template #content="{ row }">
               <template>
@@ -356,6 +356,7 @@ export default {
   },
   data() {
     return {
+      loading:false,
       imgStatus: "",
       addDialogVisible: false,
       addForm: {
@@ -395,6 +396,7 @@ export default {
   },
   methods: {
     async getData() {
+      this.loading = true;
       const res = await this.$api.users({
         limit: this.yonghuguanliPageSize,
         page: this.yonghuguanliPage,
@@ -420,6 +422,7 @@ export default {
         }
       });
       console.log(this.tableData);
+      this.loading = false;
     },
     addHandleClose() {
       this.addDialogVisible = false;
