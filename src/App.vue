@@ -11,12 +11,12 @@ export default {
   components: {
     Layout
   },
-  mounted() {
-    const oScript = document.createElement("script");
-    oScript.type = "text/javascript";
-    oScript.src = "https://gosspublic.alicdn.com/aliyun-oss-sdk-4.4.4.min.js";
-    document.body.appendChild(oScript);
-  }
+  // mounted() {
+  //   const oScript = document.createElement("script");
+  //   oScript.type = "text/javascript";
+  //   oScript.src = "https://gosspublic.alicdn.com/aliyun-oss-sdk-4.4.4.min.js";
+  //   document.body.appendChild(oScript);
+  // }
 };
 </script>
 

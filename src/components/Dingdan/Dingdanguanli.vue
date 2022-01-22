@@ -25,12 +25,9 @@
             <el-col :span="20">
               <el-form-item label="订单状态：">
                 <el-radio-group v-model="form.rad1" size="small" @change='changRad1'>
-                  <el-radio-button label="-2">全部</el-radio-button>
+                  <el-radio-button label="-1">全部</el-radio-button>
                   <el-radio-button label="0">未支付</el-radio-button>
-                  <el-radio-button label="1">待发货</el-radio-button>
-                  <el-radio-button label="2">待收货</el-radio-button>
-                  <el-radio-button label="3">交易完成</el-radio-button>
-                  <el-radio-button label="-1">已取消</el-radio-button>
+                  <el-radio-button label="1">已支付</el-radio-button>
                 </el-radio-group>
               </el-form-item>
             </el-col>
@@ -69,7 +66,7 @@
                 <div class="search">
                   <el-input
                     size="small"
-                    placeholder="请输入内容"
+                    placeholder="请输入手机号"
                     v-model="form.search"
                     class="input-with-select"
                   >
@@ -100,86 +97,15 @@
       </div>
       <div class="myTable">
         <vxe-table :loading="loading" :data="tableData">
-          <vxe-table-column type="expand" width="30" :fixed="null">
-            <template #content="{ row }">
-              <template>
-                <div class="xiala">
-                  <el-row :gutter="20">
-                    <el-col :span="6">
-                      <div class="item">快递单号：{{ row.delivery_num ? row.delivery_num :'无'}}</div>
-                    </el-col>
-                    <!-- <el-col :span="6">
-                      <div
-                        class="item"
-                      >师傅名称：{{ row.selected_quote? row.selected_quote.user_info.nick_name:'无' }}</div>
-                    </el-col>
-                    <el-col :span="6">
-                      <div
-                        class="item"
-                      >师傅电话：{{ row.selected_quote?row.selected_quote.user.phone:'无' }}</div>
-                    </el-col> -->
-                  </el-row>
-                  <!-- <el-row :gutter="20">
-                    <el-col :span="6">
-                      <div class="item">快递单号：{{ row.delivery_code }}</div>
-                    </el-col>
-                    <el-col :span="6">
-                      <div class="item">快递名称：{{ row.delivery_name }}</div>
-                    </el-col>
-                    <el-col :span="6">
-                      <div class="item">购买数量：{{ row.info.buy_num }}</div>
-                    </el-col>
-                    <el-col :span="6">
-                      <div class="item">邮费：{{ row.info.postage }}</div>
-                    </el-col>
-                  </el-row>-->
-                  <!-- <div style="margin-top: 16px"></div>
-                  <el-row :gutter="20">
-                    <el-col :span="20">
-                      <div class="item">用户备注：{{ row.intro ? row.intro : '无' }}</div>
-                    </el-col>
-                    <el-col :span="6">
-                      <div class="item">虚拟销量：3C数码/手机</div>
-                    </el-col>
-                  </el-row> -->
-                </div>
-              </template>
-            </template>
-          </vxe-table-column>
-          <vxe-table-column field="order_num" min-width="180" title="订单号"></vxe-table-column>
-          <vxe-table-column min-width="80" field="myStatus" title="订单状态"></vxe-table-column>
-          <vxe-table-column min-width="80" field="address.name" title="用户信息"></vxe-table-column>
-          <!-- <vxe-table-column min-width="120" field="myAble_delivery" title="是否要求发货"></vxe-table-column> -->          <vxe-table-column
-            min-width="180"
-            title="商品信息"
-          >
-            <template slot-scope="scope">
-              <div class="shopxx" v-for="ele2 in scope.row.order_items" :key="ele2.id">
-                <img class="shopImg" :src="ele2.image" alt />
-                <div class="txt">
-                  {{ ele2.name }}（数量:{{ele2.count}}件{{ele2.sku != '' ? ` 规格:${ele2.sku}` : ''}}） 
-                  <!-- {{ scope.row.info.product_detail.attr_info.suk }} -->
-                </div>
-              </div>
-            </template>
-          </vxe-table-column>
-          <vxe-table-column field="pay_time" min-width="160" title="支付时间"></vxe-table-column>
-          <vxe-table-column field="total_price" min-width="80" title="实际支付"></vxe-table-column>
+          <vxe-table-column field="orderId" min-width="100" title="订单号"></vxe-table-column>
+          <vxe-table-column field="orderName" title="订单名称"></vxe-table-column>
+          <vxe-table-column field="orderDesc" title="订单描述"></vxe-table-column>
+          <vxe-table-column field="myStatus" title="订单状态"></vxe-table-column>
+          <vxe-table-column field="nickname" title="用户名"></vxe-table-column>
+          <vxe-table-column field="phone" title="联系方式"></vxe-table-column>
+          <vxe-table-column field="createTime" min-width="100" title="支付时间"></vxe-table-column>
+          <vxe-table-column field="price" min-width="80" title="实际支付"></vxe-table-column>
           <!-- <vxe-table-column field="myBuy_way" min-width="80" title="支付状态"></vxe-table-column> -->
-          <vxe-table-column title="操作状态" width="130">
-            <template slot-scope="scope">
-              <div class="flex">
-                <el-button
-                  :disabled='scope.row.status != 1'
-                  size="small"
-                  @click="fahuo(scope.row)"
-                  type="text"
-                >发货</el-button>
-                <el-button size="small" @click="seeFapiao(scope.row)" type="text">发票详情</el-button>
-                <!-- <el-button size="small" @click="toEditShop(scope.row)" type="text">删除</el-button> -->
-              </div>
-            </template>
-          </vxe-table-column>
         </vxe-table>
         <el-pagination
           class="fenye"
@@ -244,7 +170,7 @@ export default {
       loading:false,
       activeName: "3",
       form: {
-        rad1: "-2",
+        rad1: "-1",
         rad2: "",
         time: [],
         search: "",
@@ -274,30 +200,19 @@ export default {
   methods: {
     async getData() {
       this.loading = true;
-      const res = await this.$api.orders({
-        page: this.dingdanliebiaoPage,
-        limit: this.dingdanliebiaoPageSize,
-        keyword:this.form.search,
+      const res = await this.$api.getOrders({
+        nowPage: this.dingdanliebiaoPage,
+        pageSize: this.dingdanliebiaoPageSize,
+        phone:this.form.search == '' ? null : this.form.search,
         status:this.form.rad1
       });
       console.log(res.data);
       this.total = res.data.total;
       this.tableData = res.data.data;
       console.log(this.tableData)
-      this.tableData.forEach(ele => {
-        ele.myStatus =
-          ele.status == -2
-            ? "已过期"
-            : ele.status == -1
-            ? "已取消"
-            : ele.status == 0
-            ? "未支付"
-            : ele.status == 1
-            ? "待发货"
-            : ele.status == 2
-            ? "已发货"
-            : "已完成";
-      });
+      this.tableData.forEach(ele=>{
+        ele.myStatus = ele.status == 1 ? '已支付' : '未支付'
+      })
       this.loading = false;
     },
     changRad1(e){

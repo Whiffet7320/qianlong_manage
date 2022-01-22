@@ -29,7 +29,7 @@ export default {
     };
   },
   created() {
-    this.username = JSON.parse(sessionStorage.getItem('userInfo')).phone
+    this.username = sessionStorage.getItem('username')
     console.log(this.username) 
   },
   methods: {

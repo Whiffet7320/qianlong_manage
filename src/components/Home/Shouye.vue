@@ -1,5 +1,21 @@
 <template>
   <div class="index">
+    <div class="myForm">
+      <el-form :inline="true" :model="formInline" class="demo-form-inline">
+        <el-form-item label="时间：">
+          <el-date-picker
+            size="small"
+            v-model="formInline.time"
+            value-format="yyyy-MM"
+            type="month"
+            placeholder="选择月"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-button size="small" type="primary" @click="onSubmit">查询</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
     <div class="top">
       <div class="box">
         <div class="icon1">
@@ -9,7 +25,7 @@
         </div>
         <div class="tit">
           <div class="txt1">{{wait_send}}</div>
-          <div class="txt2">产品总数</div>
+          <div class="txt2">总收入</div>
         </div>
       </div>
       <div class="box">
@@ -20,7 +36,7 @@
         </div>
         <div class="tit">
           <div class="txt1">{{wait_check}}</div>
-          <div class="txt2">成交总量</div>
+          <div class="txt2">年收入</div>
         </div>
       </div>
       <div class="box">
@@ -31,7 +47,42 @@
         </div>
         <div class="tit">
           <div class="txt1">{{wait_refund}}</div>
-          <div class="txt2">销售总额</div>
+          <div class="txt2">月收入</div>
+        </div>
+      </div>
+    </div>
+    <div class="top">
+      <div class="box">
+        <div class="icon1">
+          <div class="icon2">
+            <i class="el-icon-s-order"></i>
+          </div>
+        </div>
+        <div class="tit">
+          <div class="txt1">{{countCard}}</div>
+          <div class="txt2">统计名片</div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="icon1 i1-2">
+          <div class="icon2 i1-2">
+            <i class="el-icon-s-claim"></i>
+          </div>
+        </div>
+        <div class="tit">
+          <div class="txt1">{{countJob}}</div>
+          <div class="txt2">统计职位</div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="icon1 i1-3">
+          <div class="icon2 i1-3">
+            <i class="el-icon-s-release"></i>
+          </div>
+        </div>
+        <div class="tit">
+          <div class="txt1">{{countUser}}</div>
+          <div class="txt2">统计用户</div>
         </div>
       </div>
     </div>
@@ -39,31 +90,7 @@
     <div id="main2"></div>
     <div id="main3"></div>-->
     <!-- 列表 -->
-    <div class="nav2">
-      <div class="myForm">
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="供应商：">
-            <el-select size="small" v-model="formInline.category_id" placeholder="请选择">
-              <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="时间：">
-            <el-date-picker
-              style="margin-left: 20px; transform: translateY(1px)"
-              size="small"
-              v-model="formInline.time"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              value-format="yyyy-MM-dd"
-            ></el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button size="small" type="primary" @click="onSubmit">查询</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+    <div class="nav2" v-if="false">
       <div class="myTable">
         <vxe-table :data="tableData">
           <vxe-table-column type="expand" width="30" :fixed="null">
@@ -155,6 +182,9 @@ export default {
   },
   data() {
     return {
+      countUser:0,
+      countJob:0,
+      countCard:0,
       wait_send: 0,
       wait_check: 0,
       wait_refund: 0,
@@ -175,7 +205,8 @@ export default {
     // this.getData2();
     this.getNowTime();
     this.getData3();
-    this.getsupplier()
+    this.getData4();
+    // this.getsupplier();
   },
   methods: {
     async getData() {
@@ -356,27 +387,40 @@ export default {
       option3.series[0].data = week_activity_userZhiArr;
       option3 && myChart3.setOption(option3);
     },
-    async getsupplier(){
+    async getsupplier() {
       const res = await this.$api.supplier({
-        page:1,
-        limit:10000
-      })
-      console.log(res)
+        page: 1,
+        limit: 10000
+      });
+      console.log(res);
       this.options = res.data.data;
     },
     async getData3() {
-      const res = await this.$api.statistics({
-        limit: this.shouyePageSize,
-        page: this.shouyePage,
-        start_day: this.formInline.time[0],
-        end_day: this.formInline.time[1],
-        supplier_id:this.formInline.category_id
+      var arr = this.formInline.time.split('-')
+      const res = await this.$api.financeYearIncome({
+        date:arr[0],
       });
-      this.wait_send = res.data.item_count;
-      this.wait_check = res.data.orders_count;
-      this.wait_refund = res.data.orders_sumprice;
-      this.tableData = res.data.list;
-      this.total = res.data.total;
+      console.log(res);
+      if(res.status == 0){
+        this.wait_check = res.data;
+      }
+      const res2 = await this.$api.financeMonthIncome({
+        date:arr.join('-'),
+      });
+      console.log(res2);
+      if(res2.status == 0){
+        this.wait_refund = res2.data;
+      }
+      const res3 = await this.$api.financeTotalIncome();
+      console.log(res3);
+      if(res.status == 0){
+        this.wait_send = res3.data;
+      }
+      // this.wait_send = res.data.item_count;
+      // this.wait_check = res.data.orders_count;
+      // this.wait_refund = res.data.orders_sumprice;
+      // this.tableData = res.data.list;
+      // this.total = res.data.total;
     },
     async getData2() {
       // const res2 = await this.$api.categories();
@@ -398,34 +442,42 @@ export default {
         ele.nian = ele.ji * Math.ceil(Math.random() * 4) + ele.ji;
       });
     },
+    async getData4(){
+      const res = await this.$api.countCountCard()
+      this.countCard = res.data;
+      const res2 = await this.$api.countCountJob()
+      this.countJob = res2.data;
+      const res3 = await this.$api.countCountUser()
+      this.countUser = res3.data;
+    },
     getNowTime() {
       var date = new Date();
       var year = date.getFullYear();
       var month = date.getMonth() + 1;
-      var day = date.getDate();
-      if (day < 10) {
-        day = `0${day}`;
-      }
-      // var hh = date.getHours();
-      // var mm = date.getMinutes();
-      // var ss = date.getSeconds();
-      this.nowTime = `${year}-${month}-${day}`;
-      var date2 = new Date(this.nowTime);
-      date2.setDate(date.getDate() - 7);
-      var year2 = date2.getFullYear();
-      var month2 = date2.getMonth() + 1;
-      var day2 = date2.getDate();
-      if (day2 < 10) {
-        day2 = `0${day2}`;
-      }
-      this.sevenTime = `${year2}-${month2}-${day2}`;
-      console.log(this.nowTime, this.sevenTime);
-      this.formInline.time = [this.sevenTime, this.nowTime];
+      // var day = date.getDate();
+      // if (day < 10) {
+      //   day = `0${day}`;
+      // }
+      // // var hh = date.getHours();
+      // // var mm = date.getMinutes();
+      // // var ss = date.getSeconds();
+      // this.nowTime = `${year}-${month}-${day}`;
+      // var date2 = new Date(this.nowTime);
+      // date2.setDate(date.getDate() - 7);
+      // var year2 = date2.getFullYear();
+      // var month2 = date2.getMonth() + 1;
+      // var day2 = date2.getDate();
+      // if (day2 < 10) {
+      //   day2 = `0${day2}`;
+      // }
+      // this.sevenTime = `${year2}-${month2}-${day2}`;
+      // console.log(this.nowTime, this.sevenTime);
+      this.formInline.time = `${year}-${month}`;
     },
     onSubmit() {
       console.log(this.formInline);
       this.$store.commit("shouyePage", 1);
-      this.getData3()
+      this.getData3();
     },
     // 分页
     handleSizeChange(val) {

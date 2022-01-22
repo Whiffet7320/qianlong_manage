@@ -125,19 +125,21 @@ export default {
     // 登录
     async onLogin() {
       const res = await this.$api.login({
-        phone: this.loginForm.username,
+        username: this.loginForm.username,
         password: this.loginForm.password
       });
       console.log(res);
-      if (res && res.status == 200) {
-        sessionStorage.setItem("token", res.data.token_info.access_token);
+
+      if (res.status == 0) {
+        sessionStorage.setItem("token", res.data.token);
         sessionStorage.setItem("isLogin", true);
-        sessionStorage.setItem("userInfo", JSON.stringify(res.data.user));
-        sessionStorage.setItem("userId", res.data.user.id);
-        sessionStorage.setItem(
-          "menu",
-          encodeURIComponent(JSON.stringify(res.data.user.menu))
-        );
+        sessionStorage.setItem("username", res.data.username);
+        sessionStorage.setItem("userInfo", JSON.stringify(res.data));
+        sessionStorage.setItem("userId", res.data.id);
+        // sessionStorage.setItem(
+        //   "menu",
+        //   encodeURIComponent(JSON.stringify(res.data.user.menu))
+        // );
         sessionStorage.setItem("toShouye", 'yes');
         this.$message({
           message: "登录成功",
