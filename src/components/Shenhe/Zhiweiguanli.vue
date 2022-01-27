@@ -155,7 +155,14 @@
               >{{item.tagName}}</span>
             </template>
           </vxe-table-column>
-          <vxe-table-column field="myStatus" title="状态"></vxe-table-column>
+          <vxe-table-column field="myStatus" title="状态">
+            <template slot-scope="scope">
+              <span
+                style="font-size:12px;margin-right:4px"
+                :class="scope.row.status == 1?'green':scope.row.status == 3?'red':'yray'"
+              >{{scope.row.myStatus}}</span>
+            </template>
+          </vxe-table-column>
           <vxe-table-column title="操作状态" width="160">
             <template slot-scope="scope">
               <div class="flex">
@@ -173,7 +180,7 @@
                 >拒绝</el-button>
                 <el-button size="small" @click="zhiding(scope.row)" type="text">置顶</el-button>
                 <!-- <el-button size="small" @click="qxZhiding(scope.row)" type="text">取消置顶</el-button> -->
-                <!-- <el-button size="small" @click="toEditShop(scope.row)" type="text">删除</el-button> -->
+                <el-button size="small" @click="toEditShop(scope.row)" type="text">删除</el-button>
               </div>
             </template>
           </vxe-table-column>
@@ -320,6 +327,7 @@ export default {
           message: "已通过",
           type: "success"
         });
+        this.getData()
       }
     },
     async jujue(row) {
@@ -333,6 +341,7 @@ export default {
           message: "已拒绝",
           type: "success"
         });
+         this.getData()
       }
     },
     zhiding(row) {
@@ -395,13 +404,13 @@ export default {
     },
     async toEditShop(row) {
       console.log(row);
-      const res = await this.$api.orderDel({
-        id: row.id
+      const res = await this.$api.mjobDelete({
+        jobId: row.id
       });
       console.log(res);
-      if (res.code == 200) {
+      if (res.status == 0) {
         this.$message({
-          message: res.msg,
+          message: "删除成功",
           type: "success"
         });
         this.getData();
@@ -550,5 +559,14 @@ export default {
       width: 100px;
     }
   }
+}
+.red{
+  color: #F56C6C;
+}
+.green{
+  color: #67C23A;
+}
+.yray{
+  color: #909399;
 }
 </style>

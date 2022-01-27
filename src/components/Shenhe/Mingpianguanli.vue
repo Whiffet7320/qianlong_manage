@@ -102,7 +102,14 @@
           <vxe-table-column field="info" min-width="160" title="备注"></vxe-table-column>
           <vxe-table-column field="createTime" title="发布时间"></vxe-table-column>
           <vxe-table-column field="workTime" title="工作时间"></vxe-table-column>
-          <vxe-table-column field="myStatus" title="状态"></vxe-table-column>
+          <vxe-table-column field="myStatus" title="状态">
+            <template slot-scope="scope">
+              <span
+                style="font-size:12px;margin-right:4px"
+                :class="scope.row.status == 1?'green':scope.row.status == 3?'red':'yray'"
+              >{{scope.row.myStatus}}</span>
+            </template>
+          </vxe-table-column>
           <vxe-table-column title="操作状态" width="130">
             <template slot-scope="scope">
               <div class="flex">
@@ -118,7 +125,7 @@
                   @click="jujue(scope.row)"
                   type="text"
                 >拒绝</el-button>
-                <!-- <el-button size="small" @click="toEditShop(scope.row)" type="text">删除</el-button> -->
+                <el-button size="small" @click="toEditShop(scope.row)" type="text">删除</el-button>
               </div>
             </template>
           </vxe-table-column>
@@ -273,6 +280,7 @@ export default {
           message: "已通过",
           type: "success"
         });
+        this.getData()
       }
     },
     async jujue(row) {
@@ -286,6 +294,7 @@ export default {
           message: "已拒绝",
           type: "success"
         });
+        this.getData()
       }
     },
     onSubmit() {
@@ -319,13 +328,13 @@ export default {
     },
     async toEditShop(row) {
       console.log(row);
-      const res = await this.$api.orderDel({
-        id: row.id
+      const res = await this.$api.mcardDelete({
+        cardId: row.id
       });
       console.log(res);
-      if (res.code == 200) {
+      if (res.status == 0) {
         this.$message({
-          message: res.msg,
+          message: '删除成功',
           type: "success"
         });
         this.getData();
@@ -471,5 +480,14 @@ export default {
       width: 100px;
     }
   }
+}
+.red{
+  color: #F56C6C;
+}
+.green{
+  color: #67C23A;
+}
+.yray{
+  color: #909399;
 }
 </style>

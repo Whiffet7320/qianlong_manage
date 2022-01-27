@@ -24,8 +24,8 @@ let myPut = axios.create({
 myPut.interceptors.request.use(config => {
     if (sessionStorage.getItem("token")) {
         config.headers = {
-            'headerUserToken':sessionStorage.getItem("token"),
-            'headerUsername':sessionStorage.getItem("username"),
+            'headerUserToken': sessionStorage.getItem("token"),
+            'headerUsername': sessionStorage.getItem("username"),
             // 'X-Token': sessionStorage.getItem("token"),
             // 'Authorization': `Bearer ${sessionStorage.getItem("token")}`,
         }
@@ -38,8 +38,8 @@ myPut.interceptors.request.use(config => {
 myDelete.interceptors.request.use(config => {
     if (sessionStorage.getItem("token")) {
         config.headers = {
-            'headerUserToken':sessionStorage.getItem("token"),
-            'headerUsername':sessionStorage.getItem("username"),
+            'headerUserToken': sessionStorage.getItem("token"),
+            'headerUsername': sessionStorage.getItem("username"),
             // 'X-Token': sessionStorage.getItem("token"),
             // 'Authorization': `Bearer ${sessionStorage.getItem("token")}`,
             // 'Access-Control-Allow-Origin': '*',
@@ -54,8 +54,8 @@ myDelete.interceptors.request.use(config => {
 myPost.interceptors.request.use(config => {
     if (sessionStorage.getItem("token")) {
         config.headers = {
-            'headerUserToken':sessionStorage.getItem("token"),
-            'headerUsername':sessionStorage.getItem("username"),
+            'headerUserToken': sessionStorage.getItem("token"),
+            'headerUsername': sessionStorage.getItem("username"),
             // 'X-Token': sessionStorage.getItem("token"),
             // 'Authorization': `Bearer ${sessionStorage.getItem("token")}`,
         }
@@ -69,8 +69,8 @@ myPost.interceptors.request.use(config => {
 myGet.interceptors.request.use(config => {
     if (sessionStorage.getItem("token")) {
         config.headers = {
-            'headerUserToken':sessionStorage.getItem("token"),
-            'headerUsername':sessionStorage.getItem("username"),
+            'headerUserToken': sessionStorage.getItem("token"),
+            'headerUsername': sessionStorage.getItem("username"),
             // 'X-Token': sessionStorage.getItem("token"),
             // 'Authorization': `Bearer ${sessionStorage.getItem("token")}`,
         }
@@ -452,6 +452,14 @@ export default {
             }
         })
     },
+    mjobDelete(obj) {
+        return myPost({
+            url: urls.mjobDelete,
+            params: {
+                ...obj
+            }
+        })
+    },
 
     getList(obj) {
         return myGet({
@@ -597,7 +605,14 @@ export default {
             }
         })
     },
-
+    mcardDelete(obj) {
+        return myPost({
+            url: urls.mcardDelete,
+            params: {
+                ...obj
+            }
+        })
+    },
 
 
     users(obj) {

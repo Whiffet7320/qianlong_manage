@@ -1,16 +1,16 @@
 module.exports = {
-  // devServer: {
-  //   proxy: {
-  //     "/admin": {
-  //       target: "http://water.5laoye.com/admin",
-  //       secure: false,
-  //       changeOrigin: true,
-  //       pathRewrite: {
-  //         "^/admin": ""
-  //       }
-  //     }
-  //   },
-  // }
+  devServer: {
+    proxy: {
+      "/api": {
+        target: "https://manager.nmwzp.cn",
+        secure: false,
+        changeOrigin: true,
+        pathRewrite: {
+          "^/api": ""
+        }
+      }
+    },
+  }
 
   // devServer: {
   //   // proxy: {
