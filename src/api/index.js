@@ -469,6 +469,22 @@ export default {
             }
         })
     },
+    mjobUpdate(obj) {
+        return myPost({
+            url: urls.mjobUpdate,
+            data: {
+                ...obj
+            }
+        })
+    },
+    mcardUpdate(obj) {
+        return myPost({
+            url: urls.mcardUpdate,
+            data: {
+                ...obj
+            }
+        })
+    },
     update(obj) {
         return myPost({
             url: urls.update,

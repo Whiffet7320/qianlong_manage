@@ -49,4 +49,6 @@ export default {
     jobTopTypeUpRefresh:'/jobTopType/up-refresh',//修改刷新包信息
     mjobDelete:'/mjob/delete',//删除职位
     mcardDelete:'/mcard/delete',//删除名片
-}
+    mjobUpdate:'/mjob/update',//修改职位
+    mcardUpdate:'/mcard/update',//修改名片
+}   

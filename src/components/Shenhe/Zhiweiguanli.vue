@@ -32,6 +32,19 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-row>
+            <el-col :span="20">
+              <el-form-item label="工种：">
+                <el-radio-group v-model="form.rad2" size="small" @change="changRad2">
+                  <el-radio-button label="-1">全部</el-radio-button>
+                  <el-radio-button label="1">司机</el-radio-button>
+                  <el-radio-button label="2">替班司机</el-radio-button>
+                  <el-radio-button label="3">押运员</el-radio-button>
+                  <el-radio-button label="4">装卸工</el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
           <!-- <el-row>
             <el-col :span="20">
               <el-form-item label="支付方式：">
@@ -139,6 +152,7 @@
               </template>
             </template>
           </vxe-table-column>
+          <vxe-table-column field="jobTypeName" title="职位类型"></vxe-table-column>
           <vxe-table-column field="jobTitle" title="职位"></vxe-table-column>
           <vxe-table-column field="salary" title="薪资"></vxe-table-column>
           <vxe-table-column field="district" title="地点"></vxe-table-column>
@@ -163,9 +177,14 @@
               >{{scope.row.myStatus}}</span>
             </template>
           </vxe-table-column>
-          <vxe-table-column title="操作状态" width="160">
+          <vxe-table-column title="操作状态" width="200">
             <template slot-scope="scope">
               <div class="flex">
+                <el-button
+                  size="small"
+                  @click="editmy(scope.row)"
+                  type="text"
+                >修改</el-button>
                 <el-button
                   :disabled="scope.row.status != 0"
                   size="small"
@@ -235,6 +254,27 @@
         </el-form>
       </div>
     </el-dialog>
+    <!-- 修改 -->
+    <el-dialog
+      title="修改"
+      :visible.sync="xiugaiDialogVisible"
+      width="570px"
+      :before-close="xiugaiHandleClose"
+    >
+      <div class="fahuomyForm">
+        <el-form :model="xiugaiform" ref="fahuoForm" label-width="100px" class="demo-ruleForm">
+          <el-form-item label="招聘标题">
+            <el-input size="small" v-model="xiugaiform.jobTitle"></el-input>
+          </el-form-item>
+          <el-form-item label="职位描述">
+            <el-input type="textarea" size="small" v-model="xiugaiform.jobInfo"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button size="small" type="primary" @click="xiugaisubmitForm()">保存</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -256,12 +296,17 @@ export default {
   },
   data() {
     return {
+      xiugaiform:{
+        jobInfo:'',
+        jobTitle:'',
+      },
+      xiugaiDialogVisible:false,
       zhidingId: "",
       loading: false,
       activeName: "3",
       form: {
         rad1: "-1",
-        rad2: "",
+        rad2: "-1",
         time: [],
         search: "",
         select: ""
@@ -293,7 +338,8 @@ export default {
       const res = await this.$api.getUnCheckJob({
         nowPage: this.dingdanliebiaoPage,
         pageSize: this.dingdanliebiaoPageSize,
-        status: this.form.rad1
+        status: this.form.rad1,
+        jobType:this.form.rad2
       });
       console.log(res.data);
       this.total = res.data.total;
@@ -316,6 +362,9 @@ export default {
       console.log(this.tableData);
       this.loading = false;
     },
+    xiugaiHandleClose(){
+      this.xiugaiDialogVisible = false;
+    },
     async tongguo(row) {
       const res = await this.$api.checkJob({
         status: 1,
@@ -327,6 +376,27 @@ export default {
           message: "已通过",
           type: "success"
         });
+        this.getData()
+      }
+    },
+    editmy(row){
+      this.id = row.id;
+      this.xiugaiform.jobInfo = row.jobInfo;
+      this.xiugaiform.jobTitle = row.jobTitle;
+      this.xiugaiDialogVisible = true;
+    },
+    async xiugaisubmitForm(){
+      const res = await this.$api.mjobUpdate({
+        jobTitle:this.xiugaiform.jobTitle,
+        jobInfo:this.xiugaiform.jobInfo,
+        id:this.id
+      })
+      if (res.status == 0) {
+        this.$message({
+          message: "修改成功",
+          type: "success"
+        });
+        this.xiugaiDialogVisible = false;
         this.getData()
       }
     },
@@ -349,6 +419,10 @@ export default {
       this.fahuoDialogVisible = true;
     },
     changRad1(e) {
+      console.log(e);
+      this.getData();
+    },
+    changRad2(e) {
       console.log(e);
       this.getData();
     },
