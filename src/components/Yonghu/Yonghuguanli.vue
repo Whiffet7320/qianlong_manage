@@ -49,7 +49,7 @@
           icon="el-icon-plus"
           >添加用户</el-button
         >
-      </div> -->
+      </div>-->
       <div class="myTable">
         <vxe-table height="700" :loading="loading" :data="tableData">
           <vxe-table-column v-if="false" type="expand" width="30" :fixed="null">
@@ -223,12 +223,16 @@
                 <el-input size="small" v-model="addForm.shop_name"></el-input>
               </el-form-item>
             </el-col>
-          </el-row> -->
+          </el-row>-->
           <el-row>
             <el-col :span="20">
               <el-form-item label="会员时长">
                 <el-radio-group v-model="addForm.type">
-                  <el-radio v-for="item in huiyuanleixinList" :key="item.id" :label="item.id">{{item.vipName}}</el-radio>
+                  <el-radio
+                    v-for="item in huiyuanleixinList"
+                    :key="item.id"
+                    :label="item.id"
+                  >{{item.vipName}}</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
@@ -286,7 +290,7 @@ export default {
   },
   data() {
     return {
-      huiyuanleixinList:[],
+      huiyuanleixinList: [],
       loading: false,
       imgStatus: "",
       addDialogVisible: false,
@@ -294,7 +298,7 @@ export default {
         id: "",
         name: "",
         sort: "",
-        type: "",
+        type: ""
       },
       activeName: "1",
       formInline: {
@@ -323,7 +327,7 @@ export default {
   },
   created() {
     this.getData();
-    this.getHuiyuanleixin()
+    this.getHuiyuanleixin();
   },
   methods: {
     async getData() {
@@ -331,6 +335,7 @@ export default {
       const res = await this.$api.muserGetAll({
         pageSize: this.yonghuguanliPageSize,
         nowPage: this.yonghuguanliPage,
+        phone: this.formInline.search
       });
       console.log(res.data);
       this.total = res.data.total;
@@ -339,26 +344,40 @@ export default {
         if (ele.state) {
           ele.myState =
             ele.state == 0 ? "离职" : ele.state == 1 ? "已工作" : "未设置";
-            if(ele.vipUser){
-              ele.VipState = ele.vipUser.state == 0 ? '到期' : '正常'
-            }else{
-              ele.VipState = '未开通'
-            }
-          
+          if (ele.vipUser) {
+            ele.VipState = ele.vipUser.state == 0 ? "到期" : "正常";
+          } else {
+            ele.VipState = "未开通";
+          }
         }
       });
       console.log(this.tableData);
       this.loading = false;
     },
+    async tabDel(row){
+      const res = await this.$api.muserMdelUser({
+        userId:row.id
+      })
+      if (res.status == 0) {
+        this.$message({
+          message: "已删除",
+          type: "success"
+        });
+        this.getData();
+      } else {
+        this.$message.error(res.msg);
+        this.getData();
+      }
+    },
     addHandleClose() {
       this.addDialogVisible = false;
     },
-    async getHuiyuanleixin(){
+    async getHuiyuanleixin() {
       const res = await this.$api.mvipGetVIPTypeAll({
-        isDelete:2
-      })
+        isDelete: 2
+      });
       this.huiyuanleixinList = res.data;
-      this.huiyuanleixinList.pop()
+      this.huiyuanleixinList.pop();
     },
     // 删除图片
     delImg(val, i = 0) {
@@ -374,12 +393,10 @@ export default {
     },
     async AddOnSubmit() {
       console.log(this.addForm);
-      const res = await this.$api.mvipUpdateUser(
-        {
-          id:this.id,
-          type:this.addForm.type,
-        },
-      );
+      const res = await this.$api.mvipUpdateUser({
+        id: this.id,
+        type: this.addForm.type
+      });
       console.log(res);
       if (res.status == 0) {
         this.$message({
@@ -455,7 +472,7 @@ export default {
       this.id = row.id;
       this.addDialogVisible = true;
     },
-    async tabSee(row){
+    async tabSee(row) {
       console.log(row);
       this.mingxiUser_id = row.id;
       this.getFatieData();
@@ -466,7 +483,7 @@ export default {
         userId: this.mingxiUser_id,
         pageNow: this.zijinmingxiliebiaoPage,
         pageSize: this.zijinmingxiliebiaoPageSize,
-        type:this.mingxiFrom.rad1
+        type: this.mingxiFrom.rad1
       });
       console.log(res.data);
       this.mingxiTableData = res.data.data;
@@ -519,25 +536,41 @@ export default {
         }
       });
     },
-    async searchGetdata(){
+    async searchGetdata() {
+      this.loading = true;
       const res = await this.$api.getUserList({
-        phone:this.formInline.search
-      })
+        phone: this.formInline.search
+      });
       console.log(res);
       if (res.status == 0) {
         this.$message({
           message: res.msg,
           type: "success"
         });
-        this.getData();
         this.editDialogVisible = false;
+        this.total = res.data.length;
+        this.tableData = res.data;
+        this.tableData.forEach(ele => {
+          if (ele.state) {
+            ele.myState =
+              ele.state == 0 ? "离职" : ele.state == 1 ? "已工作" : "未设置";
+            if (ele.vipUser) {
+              ele.VipState = ele.vipUser.state == 0 ? "到期" : "正常";
+            } else {
+              ele.VipState = "未开通";
+            }
+          }
+        });
+        console.log(this.tableData);
+        this.loading = false;
       } else {
         this.$message.error(res.msg);
       }
     },
     onSubmit() {
       console.log(this.formInline);
-      this.searchGetdata();
+      this.getData()
+      // this.searchGetdata();
     },
     onReact() {
       this.formInline.search = "";

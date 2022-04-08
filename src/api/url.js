@@ -50,5 +50,6 @@ export default {
     mjobDelete:'/mjob/delete',//删除职位
     mcardDelete:'/mcard/delete',//删除名片
     mjobUpdate:'/mjob/update',//修改职位
+    muserMdelUser:'/muser/mdelUser',//删除用户
     mcardUpdate:'/mcard/update',//修改名片
 }   

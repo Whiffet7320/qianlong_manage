@@ -444,6 +444,14 @@ export default {
             }
         })
     },
+    muserMdelUser(obj) {
+        return myPost({
+            url: urls.muserMdelUser,
+            params: {
+                ...obj
+            }
+        })
+    },
     mvipUpdateVIPType(obj) {
         return myPost({
             url: urls.mvipUpdateVIPType,

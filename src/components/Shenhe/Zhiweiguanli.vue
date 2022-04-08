@@ -38,7 +38,7 @@
                 <el-radio-group v-model="form.rad2" size="small" @change="changRad2">
                   <el-radio-button label="-1">全部</el-radio-button>
                   <el-radio-button label="1">司机</el-radio-button>
-                  <el-radio-button label="2">替班司机</el-radio-button>
+                  <el-radio-button label="2">快递员</el-radio-button>
                   <el-radio-button label="3">押运员</el-radio-button>
                   <el-radio-button label="4">装卸工</el-radio-button>
                 </el-radio-group>
@@ -73,7 +73,7 @@
               </el-form-item>
             </el-col>
           </el-row>-->
-          <el-row>
+          <!-- <el-row>
             <el-col :span="8">
               <el-form-item label="搜索：">
                 <div class="search">
@@ -83,25 +83,12 @@
                     v-model="form.search"
                     class="input-with-select"
                   >
-                    <!-- <el-select
-                      class="left-select"
-                      v-model="form.select"
-                      slot="prepend"
-                      placeholder="请选择"
-                    >
-                      <el-option label="全部" value="1"></el-option>
-                      <el-option label="订单号" value="2"></el-option>
-                      <el-option label="UID" value="3"></el-option>
-                      <el-option label="用户名称" value="4"></el-option>
-                      <el-option label="用户电话" value="5"></el-option>
-                      <el-option label="商品名称" value="6"></el-option>
-                    </el-select>-->
                     <el-button @click="onSubmit" slot="append" icon="el-icon-search"></el-button>
                   </el-input>
                 </div>
               </el-form-item>
             </el-col>
-          </el-row>
+          </el-row> -->
         </el-form>
       </div>
       <div class="myTable">
